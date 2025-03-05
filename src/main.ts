@@ -1,8 +1,21 @@
+/* eslint-disable prettier/prettier */
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
+import { CorsOptions } from '@nestjs/common/interfaces/external/cors-options.interface';
+
+
+// Configure CORS
+const corsOptions: CorsOptions = {
+  origin: '*',
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization', 'organizationId'],
+  exposedHeaders: ['Authorization'],
+  credentials: true,
+};
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
-  await app.listen(3000);
+  app.enableCors(corsOptions);
+  await app.listen(3033);
 }
 bootstrap();

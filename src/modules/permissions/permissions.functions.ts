@@ -36,45 +36,38 @@ export function setPermissions(id: string, userPermissions: string[]): Permissio
     userPermissions.forEach((permission) => {
         switch (permission) {
 
-            // livestock
-            case 'livestockEmployee':
 
-                permissions = permissions.concat([
-                    createPermission(PermissionEnums.LIVESTOCK, permission, PermissionAccessEnum.CREATE, id),
-                ]);
 
-                break;
+            // case 'livestockManagement':
+            //     permissions = permissions.concat([
+            //         createPermission(PermissionEnums.LIVESTOCK, permission, PermissionAccessEnum.FULLACCESS, id),
+            //     ]);
+            //     break;
 
-            case 'livestockManagement':
-                permissions = permissions.concat([
-                    createPermission(PermissionEnums.LIVESTOCK, permission, PermissionAccessEnum.FULLACCESS, id),
-                ]);
-                break;
+            // case 'livestockProfessional':
+            //     permissions = permissions.concat([
+            //         createPermission(PermissionEnums.LIVESTOCK, permission, PermissionAccessEnum.PROFESSIONAL, id),
+            //     ]);
+            //     break;
 
-            case 'livestockProfessional':
-                permissions = permissions.concat([
-                    createPermission(PermissionEnums.LIVESTOCK, permission, PermissionAccessEnum.PROFESSIONAL, id),
-                ]);
-                break;
+            // // feeds
+            // case 'feedsEmployee':
+            //     permissions = permissions.concat([
+            //         createPermission(PermissionEnums.FEEDS, permission, PermissionAccessEnum.CREATE, id),
+            //     ]);
+            //     break;
 
-            // feeds
-            case 'feedsEmployee':
-                permissions = permissions.concat([
-                    createPermission(PermissionEnums.FEEDS, permission, PermissionAccessEnum.CREATE, id),
-                ]);
-                break;
+            // case 'feedsManagement':
+            //     permissions = permissions.concat([
+            //         createPermission(PermissionEnums.FEEDS, permission, PermissionAccessEnum.FULLACCESS, id),
+            //     ]);
+            //     break;
 
-            case 'feedsManagement':
-                permissions = permissions.concat([
-                    createPermission(PermissionEnums.FEEDS, permission, PermissionAccessEnum.FULLACCESS, id),
-                ]);
-                break;
-
-            case 'feedsProfessional':
-                permissions = permissions.concat([
-                    createPermission(PermissionEnums.FEEDS, permission, PermissionAccessEnum.PROFESSIONAL, id),
-                ]);
-                break;
+            // case 'feedsProfessional':
+            //     permissions = permissions.concat([
+            //         createPermission(PermissionEnums.FEEDS, permission, PermissionAccessEnum.PROFESSIONAL, id),
+            //     ]);
+            //     break;
 
             // products
             case 'productsEmployee':
@@ -116,39 +109,39 @@ export function setPermissions(id: string, userPermissions: string[]): Permissio
 
 
             // Transport
-            case 'transportManagement':
-                permissions = permissions.concat([
-                    createPermission(PermissionEnums.TRANSPORT, permission, PermissionAccessEnum.FULLACCESS, id),
-                ]);
-                break;
+            // case 'transportManagement':
+            //     permissions = permissions.concat([
+            //         createPermission(PermissionEnums.TRANSPORT, permission, PermissionAccessEnum.FULLACCESS, id),
+            //     ]);
+            //     break;
 
-            case 'transportEmployee':
-                permissions = permissions.concat([
-                    createPermission(PermissionEnums.TRANSPORT, permission, PermissionAccessEnum.CREATE, id),
-                ]);
-                break;
+            // case 'transportEmployee':
+            //     permissions = permissions.concat([
+            //         createPermission(PermissionEnums.TRANSPORT, permission, PermissionAccessEnum.CREATE, id),
+            //     ]);
+            //     break;
 
-            // Supplier / Farmer
-            case 'supplierManagement':
-                permissions = permissions.concat([
-                    createPermission(PermissionEnums.SUPPLIER, permission, PermissionAccessEnum.FULLACCESS, id),
-                ]);
-                break;
+            // // Supplier / Farmer
+            // case 'supplierManagement':
+            //     permissions = permissions.concat([
+            //         createPermission(PermissionEnums.SUPPLIER, permission, PermissionAccessEnum.FULLACCESS, id),
+            //     ]);
+            //     break;
 
-            case 'supplierEmployee':
-                permissions = permissions.concat([
-                    createPermission(PermissionEnums.SUPPLIER, permission, PermissionAccessEnum.CREATE, id),
-                ]);
-                break;
+            // case 'supplierEmployee':
+            //     permissions = permissions.concat([
+            //         createPermission(PermissionEnums.SUPPLIER, permission, PermissionAccessEnum.CREATE, id),
+            //     ]);
+            //     break;
 
 
-            // Personnel
-            case 'employee':
-                permissions = permissions.concat([
-                    createPermission(PermissionEnums.PERSONNEL, permission, PermissionAccessEnum.CREATE, id),
-                ]);
+            // // Personnel
+            // case 'employee':
+            //     permissions = permissions.concat([
+            //         createPermission(PermissionEnums.PERSONNEL, permission, PermissionAccessEnum.CREATE, id),
+            //     ]);
 
-                break;
+            //     break;
 
             // Creditors
             case PermissionEnums.CREDITOR:

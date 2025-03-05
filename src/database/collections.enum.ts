@@ -1,0 +1,66 @@
+// /* eslint-disable prettier/prettier */
+// export enum COLLECTION_ENUMS {
+
+//     // USER MANAGEMENT
+//     USERS = 'users',
+//     AUTH = 'auth',
+//     OTP = 'otp',
+
+//     MILKING_REPORTS = 'milking-reports',
+//     TRANSPORT_VEHICLES = 'transport-vehicles',
+//     SALES = 'sales',
+//     SALE_RECORDS = 'sale-records',
+//     FEEDS = 'feeds',
+//     FEED_BATCHES = 'feed-batches',
+//     FEEDING_RATIONS = 'feeding-rations',
+//     PURCHASES = 'purchases',
+//     PURCHASE_RECORDS = 'purchase-records',
+//     PRODUCTS = 'products',
+//     // PRODUCT_BATCHES = 'product-batches',
+//     REPORTS = 'reports',
+//     ORGANIZATIONS = 'organizations',
+//     LIVESTOCK = 'livestock',
+//     MILKING_GROUPS = 'milking-groups',
+//     FEEDING_GROUPS = 'feeding-groups',
+//     COUNTIES = 'counties',
+//     MILKING_SESSIONS = 'milking-sessions',
+//     REGIONS = 'regions',
+//     BREEDING_SESSIONS = 'breeding-sessions',
+//     MILKING_HOURS = 'milking-hours',
+//     FEEDING_HOURS = 'feeding-hours',
+//     INVITATIONS = 'invitations',
+//     INVOICES = 'invoices',
+//     PERMISSIONS = 'permissions',
+//     MILKING_RECORDS = 'milking-records',
+//     ACCOUNTING = 'accounting',
+//     NOTIFICATIONS = 'notifications',
+//     CHATS = 'chats',
+//     BULK_PRODUCTS = 'bulk-products',
+//     MESSAGES = 'messages',
+//     EMPLOYEES = 'employees',
+//     CREDITORS = 'creditors',
+//     FARMERS = 'farmers',
+//     DEBTORS = 'debtors',
+//     PAYMENTS = 'payments',
+//     PAYSLIPS = 'payslips',
+//     TRANSPORT_ROUTES = 'transport-routes',
+//     TRANSPORTERS = 'transporters',
+//     EXPENSES = 'expenses',
+//     PRODUCT_DELIVERIES = 'product-deliveries',
+//     ADVANCE_ORDERS = 'advance-orders',
+
+//     // AGROVET
+//     AGROVET = 'agrovet',
+//     AGROVET_SALES = 'agrovet-sales',
+//     AGROVET_SALE_RECORDS = 'agrovet-sale-records',
+//     AGROVET_PURCHASE_RECORDS = 'agrovet-purchase-records',
+//     AGROVET_PRODUCTS = 'agrovet-products',
+
+//     // BREEDING
+//     BREEDING = 'breeding',
+//     CALVING_RECORDS = 'calving-records',
+
+//     // LIVESTOCK HEALTH
+//     TREATMENT_RECORDS = 'treatment-records',
+//     DEWORMING_RECORDS = 'deworming-records',
+// }
