@@ -6,9 +6,12 @@ export enum InvoiceEnums {
     CREDIT_SALE = 'Credit Sale',
     CASH_SALE = 'Cash Sale',
     PURCHASE = 'Purchase Order',
-    EXPENDITURE = 'Expenditure',
-    PAYMENT = 'Payment',
-    LOAN = 'Loan',
+    REGISTRATION_FEE = 'Registration Fee',
+    SUBSCRIPTION = 'Subscription',
+    // EXPENDITURE = 'Expenditure',
+    // PAYMENT = 'Payment',
+    // LOAN = 'Loan',
+
 }
 
 export enum InvoiceUserTypeEnum {

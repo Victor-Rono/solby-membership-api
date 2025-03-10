@@ -249,7 +249,7 @@ export class MembersService extends BaseService<any, any, any, any> {
             createdBy: 'SYSTEM',
             createdAt: new Date().toISOString(),
             accountNumber: 0,
-            status: MemberStatusEnum.ACTIVE,
+            status: MemberStatusEnum.INACTIVE,
         }
         const save = await this.databaseService.createItem({ id: itemDto.id, itemDto, organizationId, collection: DatabaseCollectionEnums.MEMBERS });
         return save;
@@ -582,5 +582,4 @@ export class MembersService extends BaseService<any, any, any, any> {
     }
 
 }
-
 

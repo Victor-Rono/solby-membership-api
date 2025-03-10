@@ -24,7 +24,8 @@ export interface MemberInterface extends RecordInterface {
   accountNumber: number,
   location?: string,
   bankId?: string,
-  status: MemberStatusEnum
+  status: MemberStatusEnum,
+  registered?: boolean,
 
 }
 
