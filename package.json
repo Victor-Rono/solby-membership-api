@@ -20,6 +20,8 @@
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
     "test:e2e": "jest --config ./test/jest-e2e.json",
     "dev": "clear && nest start --watch",
+    "mongo:start": "clear && sudo mongod --dbpath /usr/local/var/mongodb",
+    "mongo:stop": "brew services stop mongodb-community@8.0",
     "dev --install": "clear && npm i && nest start --watch"
   },
   "dependencies": {
@@ -31,6 +33,7 @@
     "@nestjs/mongoose": "^11.0.1",
     "@nestjs/platform-express": "^9.0.0",
     "@nestjs/schedule": "^5.0.1",
+    "@ng-vibe/dialog": "^0.1.1",
     "@types/lodash": "^4.17.16",
     "@types/mongoose": "^5.11.97",
     "@types/multer": "^1.4.12",

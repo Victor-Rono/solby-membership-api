@@ -14,6 +14,7 @@ export enum InvoiceEnums {
 export enum InvoiceUserTypeEnum {
     CREDITOR = 'creditor',
     DEBTOR = 'debtor',
+    MEMBER = 'member',
     FARMER = 'farmer',
     UNKNOWN = 'unknown',
 }

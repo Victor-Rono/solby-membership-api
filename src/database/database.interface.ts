@@ -66,7 +66,7 @@ export enum DatabaseCollectionEnums {
     PRODUCT_SALES = 'product-sales',
     UNSOLD_PRODUCTS = 'unsold-products',
     // PRODUCT_BATCHES = 'product-batches',
-
+    MEMBERS = 'members',
 
     // Livestock
     LIVESTOCK = 'livestock',

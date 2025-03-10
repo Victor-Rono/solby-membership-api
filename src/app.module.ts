@@ -21,6 +21,9 @@ import { MtPurchasesModule } from './modules/mt-purchases/mt-purchases.module';
 import { ReportsModule } from './modules/reports/reports.module';
 import { MtRevenuesModule } from './modules/mt-revenues/mt-revenues.module';
 import { MtExpensesModule } from './modules/mt-expenses/mt-expenses.module';
+import { UsersModule } from './modules/users/users.module';
+import { FarmersModule } from './modules/farmers/farmers.module';
+import { MembersModule } from './modules/members/members.module';
 
 
 
@@ -45,7 +48,9 @@ const imports: any[] = [
   ReportsModule,
   MtRevenuesModule,
   MtExpensesModule,
-
+  UsersModule,
+  // FarmersModule,
+  MembersModule,
 
 ];
 
