@@ -1,11 +1,11 @@
 /* eslint-disable prettier/prettier */
 import { Injectable, Global, BadRequestException } from "@nestjs/common";
-import { RtdbService } from "src/INTEGRATIONS/firebase/services/rtdb/rtdb.service";
+import { RtdbService } from "src/integrations/firebase/services/rtdb/rtdb.service";
 import { checkIfExistsInterface, DatabaseCollectionEnums, DBRequestInterface, FieldValueInterface, GetAllItemsInterface, GetByIdInterface, MultipleFieldQueryInterface, MultipleFieldRequestInterface, QueryCollectionInterface, UpdateDBInterface } from "./database.interface";
 import { getCollectionWithorganizationId } from "./database.functions";
 import { DATABASE_INTERFACE } from "./DATABASE_INTERFACE";
 import { getBeginningOfDayFromDate, getFullDateRange } from "src/shared/functions/date-time.functions";
-import { MongoDbService } from "src/INTEGRATIONS/Mongo-Db/services/mongo-db/mongo-db.service";
+import { MongoDbService } from "src/integrations/Mongo-Db/services/mongo-db/mongo-db.service";
 import { generateRandomString } from "victor-dev-toolbox";
 
 /**

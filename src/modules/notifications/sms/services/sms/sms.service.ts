@@ -2,7 +2,7 @@
 import { Injectable } from '@nestjs/common';
 // import { HttpService } from '@nestjs/axios';
 import { SMSInterface } from 'src/shared/interfaces/sms.interface';
-import { LancolaSmsService } from 'src/INTEGRATIONS/lancola-sms/services/lancola-sms/lancola-sms.service';
+import { LancolaSmsService } from 'src/integrations/lancola-sms/services/lancola-sms/lancola-sms.service';
 import { DatabaseService } from 'src/database/database.service';
 import { generateUniqueId } from 'src/database/database.functions';
 import { DatabaseCollectionEnums } from 'src/database/database.interface';

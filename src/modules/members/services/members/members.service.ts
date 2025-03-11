@@ -2,9 +2,9 @@
 import { Injectable } from '@nestjs/common';
 import { cloneDeep } from 'lodash';
 import { DatabaseCollectionEnums, DBRequestInterface, CreateRequestInterface, checkIfExistsInterface, MultipleFieldRequestInterface, FieldValueRequestInterface } from 'src/database/database.interface';
-import { EmailInterface } from 'src/INTEGRATIONS/emails/emails.interface';
-import { EmailsService } from 'src/INTEGRATIONS/emails/services/emails/emails.service';
-import { PdfService } from 'src/INTEGRATIONS/file-manager/services/pdf/pdf.service';
+import { EmailInterface } from 'src/integrations/emails/emails.interface';
+import { EmailsService } from 'src/integrations/emails/services/emails/emails.service';
+import { PdfService } from 'src/integrations/file-manager/services/pdf/pdf.service';
 import { BaseService } from 'src/modules/base/base.service';
 import { farmerDocumentTemplate } from 'src/modules/farmers/templates/creditor-debtor/farmer.template';
 import { InvoiceInterface, InvoiceUserTypeEnum, InvoiceCategoryEnum, InvoiceEnums } from 'src/modules/invoices/invoices.interface';

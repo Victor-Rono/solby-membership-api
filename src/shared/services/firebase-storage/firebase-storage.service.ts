@@ -2,7 +2,7 @@
 /* eslint-disable prettier/prettier */
 import { Injectable } from '@nestjs/common';
 import * as admin from "firebase-admin";
-import { firebaseConfig } from 'src/INTEGRATIONS/firebase/firebase.config';
+import { firebaseConfig } from 'src/integrations/firebase/firebase.config';
 @Injectable()
 export class FirebaseStorageService {
     private readonly firebaseApp: admin.app.App;

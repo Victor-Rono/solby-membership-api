@@ -2,7 +2,7 @@
 import { Injectable } from '@nestjs/common';
 import e from 'express';
 import { DatabaseCollectionEnums, DBRequestInterface } from 'src/database/database.interface';
-import { PdfService } from 'src/INTEGRATIONS/file-manager/services/pdf/pdf.service';
+import { PdfService } from 'src/integrations/file-manager/services/pdf/pdf.service';
 import { AccountingEnum, AccountInterface, AccountSummaryInterface, DefaultAccountEnums } from 'src/modules/accounting/accounting.interface';
 import { VirtualAccounts } from 'src/modules/accounting/services/accounting/virtual-accounts.data';
 import { BaseService } from 'src/modules/base/base.service';
@@ -13,8 +13,8 @@ import { LedgerBreakdownInterface, LedgerInterface, LedgerTypeEnums } from 'src/
 import { DateRangeInterface, dayMonthYear, generateUniqueId, getTotalForField, sortArrayByKey } from 'victor-dev-toolbox';
 import { ledgerDocumentTemplate } from '../../templates/ledger.template';
 import { format } from 'date-fns';
-import { EmailsService } from 'src/INTEGRATIONS/emails/services/emails/emails.service';
-import { EmailInterface } from 'src/INTEGRATIONS/emails/emails.interface';
+import { EmailsService } from 'src/integrations/emails/services/emails/emails.service';
+import { EmailInterface } from 'src/integrations/emails/emails.interface';
 import { OrganizationInterface } from 'src/shared/interfaces/organization.interface';
 import { TenantInterface } from 'src/modules/tenants/interfaces/tenants.interface';
 import { getBeginningOfDayFromDate } from 'src/shared/functions/date-time.functions';

@@ -1,5 +1,5 @@
 /* eslint-disable prettier/prettier */
-import { LANCOLA_SMS_apiKey, LANCOLA_SMS_APIURL, LANCOLA_SMS_partnerID, LANCOLA_SMS_shortCode } from "src/INTEGRATIONS/lancola-sms/lancola-sms.config";
+import { LANCOLA_SMS_apiKey, LANCOLA_SMS_APIURL, LANCOLA_SMS_partnerID, LANCOLA_SMS_shortCode } from "src/integrations/lancola-sms/lancola-sms.config";
 import { SMSInterface } from "src/shared/interfaces/sms.interface";
 
 export function prepareMessage(payload: SMSInterface) {

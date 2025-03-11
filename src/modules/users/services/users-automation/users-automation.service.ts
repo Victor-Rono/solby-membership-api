@@ -6,9 +6,9 @@ import { UserEventsEnum } from './user-events.enum';
 import { DatabaseCollectionEnums } from 'src/database/database.interface';
 import { UserInterface } from 'src/shared/interfaces/user.interface';
 import { OrganizationInterface } from 'src/shared/interfaces/organization.interface';
-import { invitationTemplate } from 'src/INTEGRATIONS/emails/templates/auth/invitation.template';
-import { EmailsService } from 'src/INTEGRATIONS/emails/services/emails/emails.service';
-import { EmailInterface } from 'src/INTEGRATIONS/emails/emails.interface';
+import { invitationTemplate } from 'src/integrations/emails/templates/auth/invitation.template';
+import { EmailsService } from 'src/integrations/emails/services/emails/emails.service';
+import { EmailInterface } from 'src/integrations/emails/emails.interface';
 
 @Injectable()
 export class UsersAutomationService extends BaseService<any, any, any, any> {

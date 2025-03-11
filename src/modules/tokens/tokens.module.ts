@@ -1,7 +1,7 @@
 /* eslint-disable prettier/prettier */
 import { Module } from '@nestjs/common';
 import { TokensService } from './services/tokens/tokens.service';
-import { JwtModule } from 'src/INTEGRATIONS/jwt/jwt.module';
+import { JwtModule } from 'src/integrations/jwt/jwt.module';
 
 const imports: any[] = [JwtModule];
 const providers: any[] = [TokensService];

@@ -7,9 +7,9 @@ import { LedgerService } from 'src/modules/ledger/services/ledger/ledger.service
 import { resolveMultiplePromises } from 'src/shared/functions/promises.functions';
 import { OrganizationInterface } from 'src/shared/interfaces/organization.interface';
 import { comprehensiveReportTemplate } from '../../templates/comprehensive-report.template';
-import { EmailsService } from 'src/INTEGRATIONS/emails/services/emails/emails.service';
-import { PdfService } from 'src/INTEGRATIONS/file-manager/services/pdf/pdf.service';
-import { EmailInterface } from 'src/INTEGRATIONS/emails/emails.interface';
+import { EmailsService } from 'src/integrations/emails/services/emails/emails.service';
+import { PdfService } from 'src/integrations/file-manager/services/pdf/pdf.service';
+import { EmailInterface } from 'src/integrations/emails/emails.interface';
 import { MtExpensesService } from 'src/modules/mt-expenses/services/mt-expenses/mt-expenses.service';
 import { MtRevenuesService } from 'src/modules/mt-revenues/services/mt-revenues/mt-revenues.service';
 import { CreditorsService } from 'src/modules/creditors/services/creditors/creditors.service';

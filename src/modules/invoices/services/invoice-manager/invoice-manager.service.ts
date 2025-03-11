@@ -2,12 +2,12 @@
 import { Injectable } from '@nestjs/common';
 import { DatabaseCollectionEnums, DBRequestInterface } from 'src/database/database.interface';
 import { DatabaseService } from 'src/database/database.service';
-import { EmailsService } from 'src/INTEGRATIONS/emails/services/emails/emails.service';
-import { PdfService } from 'src/INTEGRATIONS/file-manager/services/pdf/pdf.service';
+import { EmailsService } from 'src/integrations/emails/services/emails/emails.service';
+import { PdfService } from 'src/integrations/file-manager/services/pdf/pdf.service';
 import { dayMonthYear, filterByDateRange, getItemsWithinDateRange, sortArrayByKey } from 'victor-dev-toolbox';
 import { InvoiceDetailsInterface, InvoiceEnums, InvoiceInterface, InvoiceParticipantInterface } from '../../invoices.interface';
 import { invoicesTemplate } from '../../templates/invoices.template';
-import { EmailInterface } from 'src/INTEGRATIONS/emails/emails.interface';
+import { EmailInterface } from 'src/integrations/emails/emails.interface';
 import { resolveMultiplePromises } from 'src/shared/functions/promises.functions';
 import { singleInvoiceTemplate } from '../../templates/single-invoice.template';
 import { generateUniqueId } from 'src/database/database.functions';

@@ -2,7 +2,7 @@
 /* eslint-disable prettier/prettier */
 import { Injectable } from '@nestjs/common';
 import { CreateRequestInterface, DatabaseCollectionEnums, DBRequestInterface } from 'src/database/database.interface';
-import { PdfService } from 'src/INTEGRATIONS/file-manager/services/pdf/pdf.service';
+import { PdfService } from 'src/integrations/file-manager/services/pdf/pdf.service';
 import { BaseService } from 'src/modules/base/base.service';
 import { PieChartInterface } from 'src/shared/interfaces/apex.interface';
 import { ExpenseCategoryInterface, GroupedExpensesInterface, MT_ExpenseInterface, MT_ExpensesDashboardInterface } from 'src/shared/interfaces/MT-expenses.interface';
@@ -10,8 +10,8 @@ import { OrganizationInterface } from 'src/shared/interfaces/organization.interf
 import { dayMonthYear, generateUniqueId, getFieldValuesFromArray, getTotalForField, resolveMultiplePromises, sortArrayByKey } from 'victor-dev-toolbox';
 import { expensesTable } from '../../templates/expenses-table.template';
 import { expensesTemplate } from '../../templates/expenses.template';
-import { EmailsService } from 'src/INTEGRATIONS/emails/services/emails/emails.service';
-import { EmailInterface } from 'src/INTEGRATIONS/emails/emails.interface';
+import { EmailsService } from 'src/integrations/emails/services/emails/emails.service';
+import { EmailInterface } from 'src/integrations/emails/emails.interface';
 import { LedgerTypeEnums, LedgerInterface } from 'src/shared/interfaces/ledger.interface';
 import { MT_SaleInterface } from 'src/shared/interfaces/MT-sales.interface';
 

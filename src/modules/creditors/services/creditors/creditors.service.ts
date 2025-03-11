@@ -11,10 +11,10 @@ import { prepareRequest } from 'src/modules/base/base.controller';
 import { filterByDateRange, getTotalForField, sortArrayByKey } from 'victor-dev-toolbox';
 import { resolveMultiplePromises } from 'src/shared/functions/promises.functions';
 import { InvoiceInterface } from 'src/modules/invoices/invoices.interface';
-import { EmailsService } from 'src/INTEGRATIONS/emails/services/emails/emails.service';
-import { PdfService } from 'src/INTEGRATIONS/file-manager/services/pdf/pdf.service';
+import { EmailsService } from 'src/integrations/emails/services/emails/emails.service';
+import { PdfService } from 'src/integrations/file-manager/services/pdf/pdf.service';
 import { OrganizationInterface } from 'src/shared/interfaces/organization.interface';
-import { EmailInterface } from 'src/INTEGRATIONS/emails/emails.interface';
+import { EmailInterface } from 'src/integrations/emails/emails.interface';
 import { creditorDocumentTemplate } from 'src/modules/accounting/templates/creditor-debtor/creditor.template';
 import { PaymentIntervalEnum } from 'src/shared/interfaces/payment.interface';
 

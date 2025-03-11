@@ -1,9 +1,9 @@
 /* eslint-disable prettier/prettier */
 import { Injectable } from '@nestjs/common';
 import { CreateRequestInterface, DBRequestInterface, DatabaseCollectionEnums } from 'src/database/database.interface';
-import { EmailInterface } from 'src/INTEGRATIONS/emails/emails.interface';
-import { EmailsService } from 'src/INTEGRATIONS/emails/services/emails/emails.service';
-import { PdfService } from 'src/INTEGRATIONS/file-manager/services/pdf/pdf.service';
+import { EmailInterface } from 'src/integrations/emails/emails.interface';
+import { EmailsService } from 'src/integrations/emails/services/emails/emails.service';
+import { PdfService } from 'src/integrations/file-manager/services/pdf/pdf.service';
 import { BaseService } from 'src/modules/base/base.service';
 import { PieChartInterface } from 'src/shared/interfaces/apex.interface';
 import { LedgerTypeEnums, LedgerInterface } from 'src/shared/interfaces/ledger.interface';

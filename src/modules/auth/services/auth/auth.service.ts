@@ -9,10 +9,10 @@ import { generateUniqueId } from "victor-dev-toolbox";
 import { OTPInterface } from "../../otp.dto";
 import { compare, hash } from "bcrypt";
 import { TokensService } from "src/modules/tokens/services/tokens/tokens.service";
-import { resetPasswordTemplate } from "src/INTEGRATIONS/emails/templates/auth/reset-password.template";
+import { resetPasswordTemplate } from "src/integrations/emails/templates/auth/reset-password.template";
 import { ProdFrontendURL } from "src/shared/data/application.data";
-import { EmailsService } from "src/INTEGRATIONS/emails/services/emails/emails.service";
-import { EmailInterface } from "src/INTEGRATIONS/emails/emails.interface";
+import { EmailsService } from "src/integrations/emails/services/emails/emails.service";
+import { EmailInterface } from "src/integrations/emails/emails.interface";
 
 @Injectable()
 export class AuthService extends BaseService<any, any, any, any> {

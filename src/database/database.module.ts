@@ -1,8 +1,8 @@
 /* eslint-disable prettier/prettier */
 import { Module } from '@nestjs/common';
 import { DatabaseService } from './database.service';
-import { MongoDbModule } from 'src/INTEGRATIONS/Mongo-Db/mongo-db.module';
-// import { FirebaseModule } from 'src/INTEGRATIONS/firebase/firebase.module';
+import { MongoDbModule } from 'src/integrations/Mongo-Db/mongo-db.module';
+// import { FirebaseModule } from 'src/integrations/firebase/firebase.module';
 // import { SmsModule } from 'src/modules/notifications/sms/sms.module';
 
 // const imports: any[] = [FirebaseModule];

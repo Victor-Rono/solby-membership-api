@@ -34,10 +34,10 @@ import {
   MT_ExpenseInterface,
 } from 'src/shared/interfaces/MT-expenses.interface';
 import { MT_RevenueInterface, RevenueCategoryInterface } from 'src/shared/interfaces/MT-revenues.interface';
-import { PdfService } from 'src/INTEGRATIONS/file-manager/services/pdf/pdf.service';
-import { EmailsService } from 'src/INTEGRATIONS/emails/services/emails/emails.service';
+import { PdfService } from 'src/integrations/file-manager/services/pdf/pdf.service';
+import { EmailsService } from 'src/integrations/emails/services/emails/emails.service';
 import { incomeStatementTemplate } from '../../templates/income-statement.template';
-import { EmailInterface } from 'src/INTEGRATIONS/emails/emails.interface';
+import { EmailInterface } from 'src/integrations/emails/emails.interface';
 import { InvoicesService } from 'src/modules/invoices/services/invoice/invoices.service';
 
 @Injectable()

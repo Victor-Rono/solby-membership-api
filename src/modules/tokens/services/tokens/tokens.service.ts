@@ -1,7 +1,7 @@
 /* eslint-disable prettier/prettier */
 import { Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
-import { DefaultJWTOptions, JwtConfig } from 'src/INTEGRATIONS/jwt/jwt.config';
+import { DefaultJWTOptions, JwtConfig } from 'src/integrations/jwt/jwt.config';
 
 @Injectable()
 export class TokensService {

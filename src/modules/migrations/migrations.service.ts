@@ -1,11 +1,11 @@
 /* eslint-disable prettier/prettier */
 import { Injectable } from '@nestjs/common';
-import { EmailInterface } from 'src/INTEGRATIONS/emails/emails.interface';
-import { EmailsService } from 'src/INTEGRATIONS/emails/services/emails/emails.service';
-import { resetPasswordTemplate } from 'src/INTEGRATIONS/emails/templates/auth/reset-password.template';
-import { PdfService } from 'src/INTEGRATIONS/file-manager/services/pdf/pdf.service';
+import { EmailInterface } from 'src/integrations/emails/emails.interface';
+import { EmailsService } from 'src/integrations/emails/services/emails/emails.service';
+import { resetPasswordTemplate } from 'src/integrations/emails/templates/auth/reset-password.template';
+import { PdfService } from 'src/integrations/file-manager/services/pdf/pdf.service';
 
-import { RtdbService } from 'src/INTEGRATIONS/firebase/services/rtdb/rtdb.service';
+import { RtdbService } from 'src/integrations/firebase/services/rtdb/rtdb.service';
 import { generateUniqueId, getCollectionWithorganizationId } from 'src/database/database.functions';
 import { DatabaseCollectionEnums } from 'src/database/database.interface';
 import { DatabaseService } from 'src/database/database.service';
@@ -108,7 +108,7 @@ export class MigrationsService {
   </body>
 </html>
 `,
-attachments:[],
+      attachments: [],
     }
     this.emailService.sendEmail(email);
   }
