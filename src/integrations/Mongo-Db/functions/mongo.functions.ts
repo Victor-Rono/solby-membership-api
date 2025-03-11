@@ -6,7 +6,8 @@ export function defaultMongoClient() {
         throw new Error('MongoConfig is missing required properties.');
     }
 
-    const connect = `mongodb://${MongoConfig.user}:${MongoConfig.pwd}@localhost:27017/${MongoConfig.dbName}`;
+    const connect = process.env.MONGODB_URI;
+
     return connect;
 }
 

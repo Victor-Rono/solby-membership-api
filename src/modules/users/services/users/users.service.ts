@@ -61,7 +61,7 @@ export class UsersService extends BaseService<any, any, any, any> {
                 if (!user.organizations) {
                     user.organizations = userOrgs || [];
                 }
-                user.organizations.push(organizationId);
+                user?.organizations.push(organizationId);
             }
             // delete (user.id);
             user.id = userInDB.id;
