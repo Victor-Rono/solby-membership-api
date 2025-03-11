@@ -97,12 +97,12 @@ export class MembersController extends BaseController<any, any, any, any> {
         return res.send(invoice); // Send the HTML content
     }
 
-    @Post('purchase')
-    makeSale(@Body() payload: any, @Headers() headers: any) {
-        const data = prepareRequest({ payload, headers });
+    // @Post('purchase')
+    // makeSale(@Body() payload: any, @Headers() headers: any) {
+    //     const data = prepareRequest({ payload, headers });
 
-        return this.service.purchase(data)
-    }
+    //     return this.service.purchase(data)
+    // }
 
     @Post('pending-invoices')
     async pendingMemberInvoices(@Body() body: any, @Headers() headers: any) {

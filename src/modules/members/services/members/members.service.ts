@@ -18,6 +18,7 @@ import { MT_SaleInterface, MT_SaleRecordInterface } from 'src/shared/interfaces/
 import { OrganizationInterface } from 'src/shared/interfaces/organization.interface';
 import { UserRegistrationInterface, UserInterface } from 'src/shared/interfaces/user.interface';
 import { getTotalForField, sortArrayByKey, resolveMultiplePromises, generateUniqueId, FieldValueInterface, getItemsWithinDateRange, dayMonthYear } from 'victor-dev-toolbox';
+import { MemberEventsEnum } from '../members-automation/members-events.enum';
 
 const collection = DatabaseCollectionEnums.INVOICES;
 
@@ -63,12 +64,14 @@ export class MembersService extends BaseService<any, any, any, any> {
 
         const finalMembers: MemberInterface[] = [];
         members.forEach(m => {
-            const filtered = invoices.filter(i => i.sellerId === m.id);
+            const filtered = invoices.filter(i => i.buyerId === m.id);
             const total = totalForAllInvoices(filtered);
             m.balance = total.totalDue;
             finalMembers.push(m);
         });
-        return finalMembers;
+        // return finalMembers;
+        return sortArrayByKey('createdAt', 'ASC', finalMembers);
+
 
 
     }
@@ -82,8 +85,8 @@ export class MembersService extends BaseService<any, any, any, any> {
             $expr: {
                 $and: [
                     { $gt: ["$totalAmount", "$amountPaid"] },
-                    { $eq: ["$buyerId", organizationId] },
-                    { $eq: ["$sellerId", id] }
+                    { $eq: ["$sellerId", organizationId] },
+                    // { $eq: ["$buyerId", id] }
                 ]
             }
         };
@@ -97,7 +100,7 @@ export class MembersService extends BaseService<any, any, any, any> {
             $expr: {
                 $and: [
                     { $gt: ["$totalAmount", "$amountPaid"] },
-                    { $eq: ["$buyerId", organizationId] }
+                    // { $eq: ["$sellerId", organizationId] }
                 ]
             }
         };
@@ -110,7 +113,7 @@ export class MembersService extends BaseService<any, any, any, any> {
         const allCreditors = resolved[0];
         const invoices: InvoiceInterface[] = resolved[1];
         allCreditors.forEach(c => {
-            const filteredInvoices = invoices.filter(i => i.sellerId === c.id);
+            const filteredInvoices = invoices.filter(i => i.buyerId === c.id);
             const totalAmount = getTotalForField(filteredInvoices, 'totalAmount');
             const totalPaid = Math.abs(getTotalForField(filteredInvoices, 'amountPaid'));
             const balance = totalAmount - totalPaid;
@@ -146,8 +149,11 @@ export class MembersService extends BaseService<any, any, any, any> {
                 return;
             }
             const id = payload.id || generateUniqueId();
+            // payload.status = MemberStatusEnum.INACTIVE;
+            payload.status = MemberStatusEnum.ACTIVE;
             super.create({ id, payload, organizationId })
                 .then((res) => {
+                    this.eventEmitter.emit(MemberEventsEnum.MEMBER_CREATED, { member: res, organizationId })
                     const notification = createNotification(
                         'success',
                         'Member Added Successfully',
@@ -406,10 +412,10 @@ export class MembersService extends BaseService<any, any, any, any> {
         const { organizationId, payload, id } = request;
         const { startDate, stopDate, field } = payload;
 
-        // const query = {
-        //     // where field = field, value = id
-        //     // where date >= startdate <= stopDate
-        // }
+        const query = {
+            // where field = field, value = id
+            // where date >= startdate <= stopDate
+        }
 
         const invoices = await this.databaseService.getItemsByField({ organizationId, field, value: id, collection });
         const filtered = await getItemsWithinDateRange({ dateRange: { startDate, stopDate }, items: invoices, fieldToCheck: 'createdAt' });
@@ -493,59 +499,59 @@ export class MembersService extends BaseService<any, any, any, any> {
 
     }
 
-    async purchase(data: DBRequestInterface) {
-        const { organizationId, payload } = data;
-        const { sale, products } = payload;
-        const item = sale as MT_SaleInterface;
-        item.items = products;
-        item.category = InvoiceCategoryEnum.PURCHASE
-        item.invoiceType = InvoiceEnums.PURCHASE,
-            item.buyerId = organizationId;
-        // item.sellerId
-        // const seller: MemberInterface = await this.databaseService.getItem({ id: item.sellerId || 'none', organizationId, collection: DatabaseCollectionEnums.MEMBERS });
-        const seller: MemberInterface = await this.getById({ id: item.sellerId || 'none', organizationId });
-        if (seller) {
-            item.sellerId = seller.id;
-            item.sellerName = seller.name;
-            item.email = seller.email;
-            item.sellerPhone = seller.phone;
-        }
+    // async purchase(data: DBRequestInterface) {
+    //     const { organizationId, payload } = data;
+    //     const { sale, products } = payload;
+    //     const item = sale as MT_SaleInterface;
+    //     item.items = products;
+    //     item.category = InvoiceCategoryEnum.PURCHASE
+    //     item.invoiceType = InvoiceEnums.PURCHASE,
+    //         item.buyerId = organizationId;
+    //     // item.sellerId
+    //     // const seller: MemberInterface = await this.databaseService.getItem({ id: item.sellerId || 'none', organizationId, collection: DatabaseCollectionEnums.MEMBERS });
+    //     const seller: MemberInterface = await this.getById({ id: item.sellerId || 'none', organizationId });
+    //     if (seller) {
+    //         item.sellerId = seller.id;
+    //         item.sellerName = seller.name;
+    //         item.email = seller.email;
+    //         item.sellerPhone = seller.phone;
+    //     }
 
 
 
-        const id = item.id || generateUniqueId();
-        item.id = id;
+    //     const id = item.id || generateUniqueId();
+    //     item.id = id;
 
-        const invoice = await this.addMemberDetails(organizationId, item);
-        const description = getDescriptionForInvoice(invoice);
-        invoice.description = description;
-        invoice.userType = InvoiceUserTypeEnum.MEMBER;
+    //     const invoice = await this.addMemberDetails(organizationId, item);
+    //     const description = getDescriptionForInvoice(invoice);
+    //     invoice.description = description;
+    //     invoice.userType = InvoiceUserTypeEnum.MEMBER;
 
-        const saveSale = await this.databaseService.createItem({ id, organizationId, itemDto: invoice, collection });
+    //     const saveSale = await this.databaseService.createItem({ id, organizationId, itemDto: invoice, collection });
 
-        const record: MT_SaleRecordInterface = {
+    //     const record: MT_SaleRecordInterface = {
 
-            saleId: saveSale.id,
-            id: generateUniqueId(),
-            items: products,
-            createdBy: "SYSTEM"
-        };
+    //         saleId: saveSale.id,
+    //         id: generateUniqueId(),
+    //         items: products,
+    //         createdBy: "SYSTEM"
+    //     };
 
-        this.eventEmitter.emit(PurchaseEventEnums.PURCHASE_MADE, { record, organizationId, sale: saveSale });
-        return saveSale;
+    //     this.eventEmitter.emit(PurchaseEventEnums.PURCHASE_MADE, { record, organizationId, sale: saveSale });
+    //     return saveSale;
 
-    }
+    // }
 
-    private async addMemberDetails(organizationId: string, invoice: InvoiceInterface): Promise<InvoiceInterface> {
-        const Member: MemberInterface = await this.getById({ id: invoice.sellerId || 'none', organizationId });
-        if (Member) {
-            invoice.sellerId = Member.id;
-            invoice.sellerName = Member.name;
-            invoice.email = Member.email;
-            invoice.sellerPhone = Member.phone;
-        }
-        return invoice;
-    }
+    // private async addMemberDetails(organizationId: string, invoice: InvoiceInterface): Promise<InvoiceInterface> {
+    //     const Member: MemberInterface = await this.getById({ id: invoice.sellerId || 'none', organizationId });
+    //     if (Member) {
+    //         invoice.sellerId = Member.id;
+    //         invoice.sellerName = Member.name;
+    //         invoice.email = Member.email;
+    //         invoice.sellerPhone = Member.phone;
+    //     }
+    //     return invoice;
+    // }
 
 
     async getMemberPendingInvoices(request: DBRequestInterface) {

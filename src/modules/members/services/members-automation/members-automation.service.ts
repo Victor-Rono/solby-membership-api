@@ -21,7 +21,7 @@ export class MembersAutomationService extends BaseAutomationService {
 
     @OnEvent(MemberEventsEnum.MEMBER_CREATED)
     async onMemberCreated(payload: { member: MemberInterface, organizationId: string }) {
-
+        const saveInvoices = await this.createOneTimeSubscriptionInvoices(payload);
         // Add all to invoice
         //  Endpoint to process invoices and activate user
     }
@@ -67,6 +67,7 @@ export class MembersAutomationService extends BaseAutomationService {
             email: member.email,
             createdBy: "SYSTEM"
         };
-        const save = await this.databaseService.createItem({ id: invoice.id, collection: DatabaseCollectionEnums.INVOICES, organizationId, itemDto: invoice })
+        const save = await this.databaseService.createItem({ id: invoice.id, collection: DatabaseCollectionEnums.INVOICES, organizationId, itemDto: invoice });
+
     }
 }
