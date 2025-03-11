@@ -1,0 +1,1 @@
+clear && nest generate module subscriptions  && nest generate service subscriptions/services/subscriptions && nest generate service  subscriptions/services/subscriptions-automation && touch subscriptions/services/subscriptions-automation/subscriptions-events.enum.ts  && nest generate controller subscriptions/controllers/subscriptions 

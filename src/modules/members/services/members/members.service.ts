@@ -406,10 +406,10 @@ export class MembersService extends BaseService<any, any, any, any> {
         const { organizationId, payload, id } = request;
         const { startDate, stopDate, field } = payload;
 
-        const query = {
-            // where field = field, value = id
-            // where date >= startdate <= stopDate
-        }
+        // const query = {
+        //     // where field = field, value = id
+        //     // where date >= startdate <= stopDate
+        // }
 
         const invoices = await this.databaseService.getItemsByField({ organizationId, field, value: id, collection });
         const filtered = await getItemsWithinDateRange({ dateRange: { startDate, stopDate }, items: invoices, fieldToCheck: 'createdAt' });

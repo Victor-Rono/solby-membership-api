@@ -19,6 +19,7 @@ import { resolveMultiplePromises } from 'src/shared/functions/promises.functions
 import { ownerPermissions, emailsToRegisterToEveryOrganization } from '../../data/tenants.data';
 import { TenantInterface, TenantRegistrationInterface } from '../../interfaces/tenants.interface';
 import { DefaultProducts } from '../../data/default-products.data';
+import { DefaultSubscriptionConfig, DefaultSubscriptions, subscriptionConfigId } from 'src/modules/subscriptions/data/subscriptions.data';
 
 @Injectable()
 export class TenantsService extends BaseService<any, any, any, any> {
@@ -89,6 +90,7 @@ export class TenantsService extends BaseService<any, any, any, any> {
     private addResources(organizationId: string) {
         this.addProducts(organizationId);
         this.AddAccounts(organizationId);
+        this.addSubscriptions(organizationId);
     }
 
 
@@ -372,6 +374,20 @@ export class TenantsService extends BaseService<any, any, any, any> {
         });
         this.databaseService.deleteItem({ id: organizationId, organizationId, collection: DatabaseCollectionEnums.DELETED_USERS });
 
+    }
+
+    private async addSubscriptions(organizationId: string) {
+        this.addSubscriptionConfig(organizationId);
+        DefaultSubscriptions.forEach(subscription => {
+            this.databaseService.createItem({ id: subscription.id, organizationId, itemDto: subscription, collection: DatabaseCollectionEnums.SUBSCRIPTIONS });
+        });
+    }
+
+    private async addSubscriptionConfig(organizationId: string) {
+        const collection = DatabaseCollectionEnums.SUBSCRIPTIONS_CONFIG;
+        const config = DefaultSubscriptionConfig;
+        const save = await this.databaseService.createItem({ id: subscriptionConfigId, organizationId, itemDto: config, collection });
+        return save;
     }
 
 

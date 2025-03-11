@@ -14,8 +14,10 @@ export class CronService {
     }
 
     @Cron('0 0 * * *') // Run every day at midnight
-    @Cron(CronExpression.EVERY_3_HOURS)
+    // @Cron(CronExpression.EVERY_3_HOURS)
     handleDailyCron() {
 
     }
+
+
 }

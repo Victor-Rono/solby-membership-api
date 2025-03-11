@@ -21,6 +21,8 @@ export enum DatabaseCollectionEnums {
     // ALL = '',
     DASHBOARD = 'dashboard',
     ADMINS = 'admins',
+    SUBSCRIPTIONS = 'subscriptions',
+    SUBSCRIPTIONS_CONFIG = 'subscriptions-config',
     // USER MANAGEMENT
     USERS = 'users',
     USERS_BACKUP = 'users-backup',

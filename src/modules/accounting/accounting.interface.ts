@@ -57,4 +57,5 @@ export enum DefaultAccountEnums {
     FUNDS_RECEIVED = 'funds',
     INCOMING_REFUNDS = 'incoming-refunds',
     OUTGOING_REFUNDS = 'outgoing-refunds',
+    MEMBERSHIP_FEES = 'Membership Fees'
 }

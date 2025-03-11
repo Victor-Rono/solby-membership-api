@@ -6,7 +6,7 @@ export enum InvoiceEnums {
     CREDIT_SALE = 'Credit Sale',
     CASH_SALE = 'Cash Sale',
     PURCHASE = 'Purchase Order',
-    REGISTRATION_FEE = 'Registration Fee',
+    ONE_TIME = 'One Time',
     SUBSCRIPTION = 'Subscription',
     // EXPENDITURE = 'Expenditure',
     // PAYMENT = 'Payment',
@@ -20,6 +20,7 @@ export enum InvoiceUserTypeEnum {
     MEMBER = 'member',
     FARMER = 'farmer',
     UNKNOWN = 'unknown',
+
 }
 
 
