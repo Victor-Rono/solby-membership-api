@@ -12,10 +12,14 @@ import { getBeginningOfDayFromDate } from 'src/shared/functions/date-time.functi
 import { generateUniqueId } from 'src/database/database.functions';
 import { getTotalForField } from 'victor-dev-toolbox';
 import { DefaultAccountEnums } from 'src/modules/accounting/accounting.interface';
+import { SmsService } from 'src/modules/notifications/sms/services/sms/sms.service';
+import { SMSInterface } from 'src/shared/interfaces/sms.interface';
 
 @Injectable()
 export class MembersAutomationService extends BaseAutomationService {
-    constructor() {
+    constructor(
+        private smsService: SmsService,
+    ) {
         super();
     }
 
@@ -68,6 +72,26 @@ export class MembersAutomationService extends BaseAutomationService {
             createdBy: "SYSTEM"
         };
         const save = await this.databaseService.createItem({ id: invoice.id, collection: DatabaseCollectionEnums.INVOICES, organizationId, itemDto: invoice });
+        const notify = await this.notifyMember(payload);
 
+    }
+
+
+    private async notifyMember(payload: { member: MemberInterface, organizationId: string }) {
+        const { member, organizationId } = payload;
+
+        const sms: SMSInterface = {
+            organizationId,
+            phone: member.phone,
+            message: this.getNotificationMessage(member),
+            // response?: any;
+        };
+        const sendSms = await this.smsService.sendSMS(sms);
+        return sendSms;
+    }
+
+    private getNotificationMessage(member: MemberInterface) {
+        const message = `Hello ${member.name}, Welcome to our Membership platform. To continue, please pay your membership fee.`;
+        return message;
     }
 }

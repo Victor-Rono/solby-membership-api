@@ -1,9 +1,4 @@
 /* eslint-disable prettier/prettier */
-import { RecordInterface } from "src/shared/interfaces/record.interface";
-// export interface RecordInterface extends RecordInterface {
-//     // required
-//     id: string,
-// }
 
 export type DBStatusTypes =
     | 'Active'
@@ -278,65 +273,3 @@ export interface FieldValueRequestInterface extends DBRequestInterface {
     payload: FieldValueInterface,
 }
 
-// export const CollectionsToIndexData: DatabaseCollectionEnums[] = [
-//     DatabaseCollectionEnums.TRANSPORTERS,
-//     DatabaseCollectionEnums.FARMERS,
-//     DatabaseCollectionEnums.FARMERS,
-//     'farmers',
-//     'transport-vehicles',
-//     'users',
-//     'agrovet-sales',
-//     'advance-orders',
-//     'expenses',
-//     'breeding-sessions'
-
-// ];
-
-// export type DatabaseCollectionEnums =
-//     | 'users'
-//     | 'otp'
-//     | 'milking-reports'
-//     | 'transport-vehicles'
-//     | 'sales'
-//     | 'sale-records'
-//     | 'feeds'
-//     | 'feed-batches'
-//     | 'feeding-rations'
-//     | 'purchases'
-//     | 'purchase-records'
-//     | 'products'
-//     | 'product-batches'
-//     | 'reports'
-//     | 'organizations'
-//     | 'livestock'
-//     | 'milking-groups'
-//     | 'feeding-groups'
-//     | 'counties'
-//     | 'milking-sessions'
-//     | 'regions'
-//     | 'breeding-sessions'
-//     | 'milking-hours'
-//     | 'feeding-hours'
-//     | 'invitations'
-//     | 'permissions'
-//     | 'milking-records'
-//     | 'permissions'
-//     | 'accounting'
-//     | 'notifications'
-//     | 'chats'
-//     | 'bulk-products'
-//     | 'messages'
-//     | 'employees'
-//     | 'creditors'
-//     | 'farmers'
-//     | 'debtors'
-//     | 'transport-routes'
-//     | 'transporters'
-//     | 'expenses'
-//     | 'product-deliveries'
-//     | 'advance-orders'
-//     | 'agrovet'
-//     | 'agrovet-sales'
-//     | 'agrovet-sale-records'
-//     | 'agrovet-purchase-records'
-//     | 'agrovet-products'

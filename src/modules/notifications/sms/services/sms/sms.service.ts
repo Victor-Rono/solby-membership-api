@@ -16,8 +16,8 @@ export class SmsService {
 
     async sendSMS(payload: SMSInterface) {
         const sendSMS = await this.SMS_service.sendSMS(payload);
-        payload.response = sendSMS;
-        // this.saveSMS(payload);
+        // payload.response = sendSMS;
+        this.saveSMS(payload);
         return sendSMS;
     }
 

@@ -3,7 +3,7 @@ import { Injectable } from '@nestjs/common';
 import { getRequest } from 'src/shared/functions/http.functions';
 import { phoneNumberWithCountryCode } from 'src/shared/functions/phone-numbers.functions';
 import { SMSInterface } from 'src/shared/interfaces/sms.interface';
-import { prepareMessage } from './lancola-sms.functions';
+import { prepareLancolaMessage } from './lancola-sms.functions';
 
 @Injectable()
 export class LancolaSmsService {
@@ -13,7 +13,7 @@ export class LancolaSmsService {
         return new Promise<any>(async (resolve, reject) => {
             const phoneNumber = phoneNumberWithCountryCode({ phoneNumber: payload.phone, countryCode: '254' });
             payload.phone = phoneNumber;
-            const finalURL = prepareMessage(payload);
+            const finalURL = prepareLancolaMessage(payload);
 
 
             getRequest(finalURL).then((response) => {
