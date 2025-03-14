@@ -25,6 +25,7 @@ import { UsersModule } from './modules/users/users.module';
 import { FarmersModule } from './modules/farmers/farmers.module';
 import { MembersModule } from './modules/members/members.module';
 import { SubscriptionsModule } from './modules/subscriptions/subscriptions.module';
+import { GroupsModule } from './modules/groups/groups.module';
 
 
 
@@ -53,6 +54,7 @@ const imports: any[] = [
   // FarmersModule,
   MembersModule,
   SubscriptionsModule,
+  GroupsModule,
 
 ];
 
