@@ -13,7 +13,7 @@ import { defaultMongoClient } from './functions/mongo.functions';
             })
         })
     ],
-    providers: [MongoDbService], // Add your service here
-    exports: [MongoDbService], // Make sure the service is exported if you want to use it in other modules
+    providers: [MongoDbService],
+    exports: [MongoDbService], // Make sure the MongoDbService is exported if you want to use it in other modules
 })
 export class MongoDbModule { }

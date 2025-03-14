@@ -19,6 +19,7 @@ import { OrganizationInterface } from 'src/shared/interfaces/organization.interf
 import { UserRegistrationInterface, UserInterface } from 'src/shared/interfaces/user.interface';
 import { getTotalForField, sortArrayByKey, resolveMultiplePromises, generateUniqueId, FieldValueInterface, getItemsWithinDateRange, dayMonthYear } from 'victor-dev-toolbox';
 import { MemberEventsEnum } from '../members-automation/members-events.enum';
+import { SMSEventsEnum } from 'src/shared/interfaces/sms.interface';
 
 const collection = DatabaseCollectionEnums.INVOICES;
 
@@ -585,6 +586,11 @@ export class MembersService extends BaseService<any, any, any, any> {
         const invoices = await this.databaseService.getAllItems({ organizationId, query, collection: DatabaseCollectionEnums.INVOICES });
 
         return invoices;
+    }
+
+    async emitEvent() {
+        this.eventEmitter.emit(SMSEventsEnum.SED_TEST_SMS);
+        return "EVENT";
     }
 
 }

@@ -77,13 +77,13 @@ export class BaseController<CreateDto, ReadDto, UpdateDto, DeleteDto> {
         return this.baseService.deleteRecord(request);
     }
 
-    // @Delete('collection/all')
-    // async deleteCollection(@Headers() headers: any): Promise<any> {
-    //     const request = prepareRequest({ headers });
+    @Delete('collection/all')
+    async deleteCollection(@Headers() headers: any): Promise<any> {
+        const request = prepareRequest({ headers });
 
 
-    //     return this.baseService.deleteCollection(request.organizationId);
-    // }
+        return this.baseService.deleteCollection(request.organizationId);
+    }
 
 
 }

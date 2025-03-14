@@ -153,11 +153,11 @@ export class BaseService<CreateDto, ReadDto, UpdateDto, DeleteDto> {
         return response;
     }
 
-    // async deleteCollection(organizationId: string) {
-    //     const items: any[] = await this.getAll(organizationId);
-    //     const promises = items.map((item) => this.deleteRecord({ id: item.id, organizationId }));
-    //     // return await this.databaseService.deleteCollection({ organizationId, collection: this.collection })
-    // }
+    async deleteCollection(organizationId: string) {
+        const items: any[] = await this.getAll(organizationId);
+        const promises = items.map((item) => this.deleteRecord({ id: item.id, organizationId }));
+        // return await this.databaseService.deleteCollection({ organizationId, collection: this.collection })
+    }
 
     async getAllFromCollection(payload: { organizationId: string, collection: DatabaseCollectionEnums }) {
         return this.databaseService.getAllItems(payload);

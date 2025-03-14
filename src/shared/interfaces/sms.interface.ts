@@ -5,3 +5,7 @@ export interface SMSInterface {
     message: string;
     response?: any;
 }
+
+export enum SMSEventsEnum {
+    SED_TEST_SMS = 'Send Test Sms'
+}

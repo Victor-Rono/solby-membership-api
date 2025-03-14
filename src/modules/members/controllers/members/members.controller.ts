@@ -110,4 +110,9 @@ export class MembersController extends BaseController<any, any, any, any> {
         const invoice = await this.service.getMemberPendingInvoices(payload);
         return invoice;
     }
+
+    // @Get('emit/event')
+    // emit() {
+    //     return this.service.emitEvent();
+    // }
 }

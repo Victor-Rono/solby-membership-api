@@ -209,5 +209,12 @@ export class DatabaseService implements DATABASE_INTERFACE {
 
     }
 
+    // private getSerialNumber(length?: number) {
+    //     const len = length || 4;
+    //     const profanity = 
+    // }
+
+
+
 
 }

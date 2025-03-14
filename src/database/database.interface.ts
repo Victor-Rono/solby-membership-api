@@ -18,6 +18,13 @@ export enum DatabaseCollectionEnums {
     ADMINS = 'admins',
     SUBSCRIPTIONS = 'subscriptions',
     SUBSCRIPTIONS_CONFIG = 'subscriptions-config',
+
+    // Membership
+    MEMBERS = 'members',
+    GROUPS = 'groups',
+
+
+
     // USER MANAGEMENT
     USERS = 'users',
     USERS_BACKUP = 'users-backup',
@@ -63,7 +70,6 @@ export enum DatabaseCollectionEnums {
     PRODUCT_SALES = 'product-sales',
     UNSOLD_PRODUCTS = 'unsold-products',
     // PRODUCT_BATCHES = 'product-batches',
-    MEMBERS = 'members',
 
     // Livestock
     LIVESTOCK = 'livestock',
