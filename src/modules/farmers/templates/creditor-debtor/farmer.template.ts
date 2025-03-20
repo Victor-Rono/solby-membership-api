@@ -7,8 +7,9 @@ import { DebtorInterface } from "src/shared/interfaces/debtors.interface";
 import { farmerHeaderTemplate } from "./farmer-header.template";
 import { FarmerInterface } from "src/shared/interfaces/farmer.interface";
 import { farmersTableTemplate } from "./farmer-table.template";
+import { MemberInterface } from "src/shared/interfaces/members.interface";
 
-export function farmerDocumentTemplate(payload: { title: string, organization: OrganizationInterface, items: FarmerInterface[] }): string {
+export function farmerDocumentTemplate(payload: { title: string, organization: OrganizationInterface, items: MemberInterface[] }): string {
   const { organization, items, title } = payload;
   const template = `
   <!DOCTYPE html>

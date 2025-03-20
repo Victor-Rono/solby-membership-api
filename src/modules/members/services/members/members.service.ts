@@ -171,52 +171,52 @@ export class MembersService extends BaseService<any, any, any, any> {
 
 
 
-    async addCreditor(data: DBRequestInterface) {
-        const { id, payload, organizationId } = data;
-        const user = payload as UserRegistrationInterface;
-        const request: checkIfExistsInterface = {
-            fields: [
-                {
-                    field: 'email',
-                    value: user.email,
-                },
-                {
-                    field: 'phone',
-                    value: user.phone,
-                },
+    // async addCreditor(data: DBRequestInterface) {
+    //     const { id, payload, organizationId } = data;
+    //     const user = payload as UserRegistrationInterface;
+    //     const request: checkIfExistsInterface = {
+    //         fields: [
+    //             {
+    //                 field: 'email',
+    //                 value: user.email,
+    //             },
+    //             {
+    //                 field: 'phone',
+    //                 value: user.phone,
+    //             },
 
-            ],
-            organizationId,
-            collection: DatabaseCollectionEnums.USERS,
-        }
+    //         ],
+    //         organizationId,
+    //         collection: DatabaseCollectionEnums.USERS,
+    //     }
 
-        const fields = [
-            {
-                field: 'email',
-                value: user.email,
-            },
-            {
-                field: 'phone',
-                value: user.phone,
-            },
-        ]
-        const userInDB = await this.getUserByFields(organizationId, fields);
+    //     const fields = [
+    //         {
+    //             field: 'email',
+    //             value: user.email,
+    //         },
+    //         {
+    //             field: 'phone',
+    //             value: user.phone,
+    //         },
+    //     ]
+    //     const userInDB = await this.getUserByFields(organizationId, fields);
 
 
-        // const userExists = await this.databaseService.checkIfExists(request);
-        request.collection = DatabaseCollectionEnums.MEMBERS;
-        const creditorExists = await this.databaseService.checkIfExists(request);
-        if (creditorExists) {
-            return {
-                message: 'Member EXISTS',
-            }
-        }
+    //     // const userExists = await this.databaseService.checkIfExists(request);
+    //     request.collection = DatabaseCollectionEnums.MEMBERS;
+    //     const creditorExists = await this.databaseService.checkIfExists(request);
+    //     if (creditorExists) {
+    //         return {
+    //             message: 'Member EXISTS',
+    //         }
+    //     }
 
-        // Save as a Creditor
-        const saveCreditor = await this.saveCreditor(user, organizationId, userInDB);
-        return saveCreditor;
+    //     // Save as a Creditor
+    //     const saveCreditor = await this.saveCreditor(user, organizationId, userInDB);
+    //     return saveCreditor;
 
-    }
+    // }
 
     async getUserByFields(organizationId: string, fields: FieldValueInterface[]): Promise<UserInterface | null> {
         const query: MultipleFieldRequestInterface = {
@@ -231,36 +231,36 @@ export class MembersService extends BaseService<any, any, any, any> {
         return user[0] || null;
     }
 
-    private async saveCreditor(user: UserRegistrationInterface, organizationId: string, userInDB: UserInterface | null) {
+    // private async saveCreditor(user: UserRegistrationInterface, organizationId: string, userInDB: UserInterface | null) {
 
-        let userId = generateUniqueId();
-        if (!userInDB) {
-            const dbUser: UserInterface = await this.saveUser(user, organizationId);
-            userId = dbUser.id;
-        } else {
-            userId = userInDB.id;
-        }
-        const { phone, email, idNumber, name } = user;
-        const itemDto: MemberInterface = {
-            id: userId,
-            userId,
-            name,
-            email,
-            phone,
-            idNumber,
-            balance: 0,
-            // paymentInterval: PaymentIntervalEnum.MONTHLY,
-            currency: 'KES',
-            deductions: [],
-            allowances: [],
-            createdBy: 'SYSTEM',
-            createdAt: new Date().toISOString(),
-            accountNumber: 0,
-            status: MemberStatusEnum.INACTIVE,
-        }
-        const save = await this.databaseService.createItem({ id: itemDto.id, itemDto, organizationId, collection: DatabaseCollectionEnums.MEMBERS });
-        return save;
-    }
+    //     let userId = generateUniqueId();
+    //     if (!userInDB) {
+    //         const dbUser: UserInterface = await this.saveUser(user, organizationId);
+    //         userId = dbUser.id;
+    //     } else {
+    //         userId = userInDB.id;
+    //     }
+    //     const { phone, email, idNumber, name } = user;
+    //     const itemDto: MemberInterface = {
+    //         id: userId,
+    //         userId,
+    //         name,
+    //         email,
+    //         phone,
+    //         idNumber,
+    //         balance: 0,
+    //         // paymentInterval: PaymentIntervalEnum.MONTHLY,
+    //         currency: 'KES',
+    //         deductions: [],
+    //         allowances: [],
+    //         createdBy: 'SYSTEM',
+    //         createdAt: new Date().toISOString(),
+    //         accountNumber: 0,
+    //         status: MemberStatusEnum.INACTIVE,
+    //     }
+    //     const save = await this.databaseService.createItem({ id: itemDto.id, itemDto, organizationId, collection: DatabaseCollectionEnums.MEMBERS });
+    //     return save;
+    // }
 
     async saveUser(user: UserRegistrationInterface, organizationId: string): Promise<UserInterface> {
         const { phone, email, idNumber, name } = user;
@@ -336,31 +336,31 @@ export class MembersService extends BaseService<any, any, any, any> {
         return user;
     }
 
-    async addCreditorByPhone(data: CreateRequestInterface) {
-        const { organizationId, payload, id } = data;
-        const { phone } = payload;
-        const users: UserInterface[] = await this.databaseService.getItemsByField({ field: 'phone', value: phone, collection: DatabaseCollectionEnums.USERS, organizationId });
-        const user = users[0];
-        if (!user) {
-            return false;
-        }
+    // async addCreditorByPhone(data: CreateRequestInterface) {
+    //     const { organizationId, payload, id } = data;
+    //     const { phone } = payload;
+    //     const users: UserInterface[] = await this.databaseService.getItemsByField({ field: 'phone', value: phone, collection: DatabaseCollectionEnums.USERS, organizationId });
+    //     const user = users[0];
+    //     if (!user) {
+    //         return false;
+    //     }
 
-        const creditor: MemberInterface = {
-            id,
-            userId: user.id,
-            name: user.name,
-            phone: user.phone,
-            email: user.email,
-            idNumber: user.idNumber,
-            createdBy: 'SYSTEM',
-            balance: 0,
-            // paymentInterval: PaymentIntervalEnum.MONTHLY,
-            currency: 'KES',
-            createdAt: new Date().toISOString(),
-            accountNumber: 0,
-            status: MemberStatusEnum.ACTIVE
-        };
-    }
+    //     const creditor: MemberInterface = {
+    //         id,
+    //         userId: user.id,
+    //         name: user.name,
+    //         phone: user.phone,
+    //         email: user.email,
+    //         idNumber: user.idNumber,
+    //         createdBy: 'SYSTEM',
+    //         balance: 0,
+    //         // paymentInterval: PaymentIntervalEnum.MONTHLY,
+    //         currency: 'KES',
+    //         createdAt: new Date().toISOString(),
+    //         accountNumber: 0,
+    //         status: MemberStatusEnum.ACTIVE
+    //     };
+    // }
 
     private async getCreditorsReportHtml(organizationId: string) {
         const title = 'Members Report';

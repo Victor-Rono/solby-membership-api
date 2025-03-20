@@ -1,10 +1,11 @@
 /* eslint-disable prettier/prettier */
 
 import { FarmerInterface } from "src/shared/interfaces/farmer.interface";
+import { MemberInterface } from "src/shared/interfaces/members.interface";
 
 
 export function farmersTableTemplate(
-  items: FarmerInterface[]
+  items: MemberInterface[]
 ): string {
   return `
     <div style="font-family: sans-serif; margin: 20px; color: #000;">
@@ -22,7 +23,7 @@ export function farmersTableTemplate(
         </thead>
         <tbody>
           ${items
-      .map((entry: FarmerInterface, index) => {
+      .map((entry: MemberInterface, index) => {
         return `
                 <tr>
                   <td style="padding: 10px; border: 1px solid #ddd; text-align: left;">${index + 1}</td>

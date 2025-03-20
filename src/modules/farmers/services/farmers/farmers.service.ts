@@ -219,7 +219,7 @@ export class FarmersService extends BaseService<any, any, any, any> {
             phone,
             idNumber,
             balance: 0,
-            // paymentInterval: PaymentIntervalEnum.MONTHLY,
+            paymentInterval: PaymentIntervalEnum.MONTHLY,
             currency: 'KES',
             deductions: [],
             allowances: [],
@@ -324,7 +324,7 @@ export class FarmersService extends BaseService<any, any, any, any> {
             idNumber: user.idNumber,
             createdBy: 'SYSTEM',
             balance: 0,
-            // paymentInterval: PaymentIntervalEnum.MONTHLY,
+            paymentInterval: PaymentIntervalEnum.MONTHLY,
             currency: 'KES',
             createdAt: new Date().toISOString(),
             accountNumber: 0,
@@ -336,7 +336,8 @@ export class FarmersService extends BaseService<any, any, any, any> {
         const title = 'Farmers Report';
         const items: FarmerInterface[] = await this.getAll(organizationId);
         const organization: OrganizationInterface = await this.databaseService.getItem({ id: organizationId, organizationId, collection: DatabaseCollectionEnums.ORGANIZATIONS });
-        const html = farmerDocumentTemplate({ title, items, organization });
+        // const html = farmerDocumentTemplate({ title, items, organization });
+        const html = "NOT SUPPORTED";
         return html;
     }
 

@@ -10,12 +10,12 @@ export class MembersController extends BaseController<any, any, any, any> {
     }
 
 
-    @Post('add-creditor')
-    async addCreditor(@Body() payload: any, @Headers() headers: any,) {
-        const request = prepareRequest({ headers, payload });
-        const add = await this.service.addCreditor(request);
-        return add;
-    }
+    // @Post('add-creditor')
+    // async addCreditor(@Body() payload: any, @Headers() headers: any,) {
+    //     const request = prepareRequest({ headers, payload });
+    //     const add = await this.service.addCreditor(request);
+    //     return add;
+    // }
 
 
     @Get('invoices/pending/:id')
