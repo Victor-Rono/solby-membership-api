@@ -14,11 +14,16 @@ import { getTotalForField } from 'victor-dev-toolbox';
 import { DefaultAccountEnums } from 'src/modules/accounting/accounting.interface';
 import { SmsService } from 'src/modules/notifications/sms/services/sms/sms.service';
 import { SMSInterface } from 'src/shared/interfaces/sms.interface';
+import { MembersService } from '../members/members.service';
+import { InvoiceManagerService } from 'src/modules/invoices/services/invoice-manager/invoice-manager.service';
+import { resolveMultiplePromises } from 'src/shared/functions/promises.functions';
 
 @Injectable()
 export class MembersAutomationService extends BaseAutomationService {
     constructor(
         private smsService: SmsService,
+        private membersService: MembersService,
+        private invoiceManagerService: InvoiceManagerService,
     ) {
         super();
     }
@@ -72,7 +77,35 @@ export class MembersAutomationService extends BaseAutomationService {
             createdBy: "SYSTEM"
         };
         const save = await this.databaseService.createItem({ id: invoice.id, collection: DatabaseCollectionEnums.INVOICES, organizationId, itemDto: invoice });
+        this.resolveInvoicePayments({ id: member.id, organizationId })
         const notify = await this.notifyMember(payload);
+
+    }
+
+    private async resolveInvoicePayments(request: { id: string, organizationId: string }) {
+        const { id, organizationId } = request;
+        const account = await this.databaseService.getItem({ organizationId, id, collection: DatabaseCollectionEnums.MEMBER_ACCOUNTS });
+        const currentAmount = account?.amount;
+        if (!currentAmount) return;
+        const invoices = await this.membersService.getAllPendingSingleMemberInvoices({ id, organizationId });
+        let current = currentAmount;
+        const promises: any[] = [];
+        invoices.forEach(i => {
+            if (!current) return;
+            const pendingAmount = i.totalAmount - i.amountPaid;
+            let amountPaid = pendingAmount;
+            if (current >= pendingAmount) {
+                current -= pendingAmount;
+            } else {
+                amountPaid = current;
+                current = 0;
+            }
+
+            promises.push(this.invoiceManagerService.payForInvoice({ organizationId, payload: { amountPaid } }));
+        })
+        const resolved = await resolveMultiplePromises(promises);
+
+
 
     }
 

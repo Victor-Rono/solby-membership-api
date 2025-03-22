@@ -18,6 +18,7 @@ import { getTotalForField, sortArrayByKey, resolveMultiplePromises, generateUniq
 import { MemberEventsEnum } from '../members-automation/members-events.enum';
 import { SMSEventsEnum } from 'src/shared/interfaces/sms.interface';
 import { TenantInterface } from 'src/modules/tenants/interfaces/tenants.interface';
+import { DefaultAccountEnums } from 'src/modules/accounting/accounting.interface';
 
 const collection = DatabaseCollectionEnums.INVOICES;
 
@@ -173,7 +174,6 @@ export class MembersService extends BaseService<any, any, any, any> {
             delete payload.outstandingBalance;
 
             const member = await super.create({ id, payload, organizationId });
-            this.eventEmitter.emit(MemberEventsEnum.MEMBER_CREATED, { member, organizationId })
             if (outstandingBalance) {
                 this.saveOutstandingBalance({ organizationId, member, amount: outstandingBalance });
             }
@@ -183,6 +183,8 @@ export class MembersService extends BaseService<any, any, any, any> {
             }
             const notification = createNotification('success', 'Member created successfully');
             member.notification = notification;
+            this.eventEmitter.emit(MemberEventsEnum.MEMBER_CREATED, { member, organizationId })
+
             resolve(member);
 
         });
@@ -282,15 +284,31 @@ export class MembersService extends BaseService<any, any, any, any> {
         const { organizationId, payload, id } = request;
         const { startDate, stopDate, field } = payload;
 
-        const query = {
-            // where field = field, value = id
-            // where date >= startdate <= stopDate
-        }
+
 
         const invoices = await this.databaseService.getItemsByField({ organizationId, field, value: id, collection });
         const filtered = await getItemsWithinDateRange({ dateRange: { startDate, stopDate }, items: invoices, fieldToCheck: 'createdAt' });
 
         return sortArrayByKey('createdAt', 'DESC', filtered);
+    }
+
+    async getAllPendingSingleMemberInvoices(request: DBRequestInterface): Promise<InvoiceInterface[]> {
+        const { organizationId, id } = request;
+        // const { startDate, stopDate, field } = payload;
+
+        const query = {
+            $expr: {
+                $and: [
+                    { $gt: ["$totalAmount", "$amountPaid"] },
+                    { $eq: ["$buyerId", id] },
+                    // { $eq: ["$buyerId", id] }
+                ]
+            }
+        };
+
+        const invoices = await this.databaseService.getAllItems({ organizationId, query, collection });
+        return invoices;
+
     }
 
     private async getSingleMemberInvoiceHTML(request: DBRequestInterface): Promise<string> {
@@ -435,7 +453,7 @@ export class MembersService extends BaseService<any, any, any, any> {
             currency: "KES",
             buyerId: member.id,
             sellerId: organizationId,
-            accountId: 'arrears',
+            accountId: DefaultAccountEnums.MEMBERSHIP_FEES,
             day: getBeginningOfDayFromDate(),
             category: InvoiceCategoryEnum.SALE,
             buyerName: member.name,
@@ -460,8 +478,6 @@ export class MembersService extends BaseService<any, any, any, any> {
         const createAccount = await this.databaseService.createItem({ id, organizationId, itemDto: { id, amount: 0 }, collection });
         return createAccount;
     }
-
-
 
 }
 
