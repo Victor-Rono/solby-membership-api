@@ -112,7 +112,8 @@ export function getBeginningOfEachDayFromArrayOfDates(dates: string[]) {
     return beginningOfEachDay.sort();
 }
 
-export function getBeginningOfDayFromDate(date: string) {
+export function getBeginningOfDayFromDate(siku?: string) {
+    const date = siku || new Date().toISOString();
     const beginningOfDay = new Date(date).setUTCHours(0, 0, 0, 0);
     const endOfDay = new Date(date).setUTCHours(23, 59, 59, 999);
     const timeNow = new Date(date).getTime();

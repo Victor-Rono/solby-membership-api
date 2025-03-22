@@ -5,8 +5,9 @@ import { GroupsAutomationService } from './services/groups-automation/groups-aut
 import { GroupsController } from './controllers/groups/groups.controller';
 import { generateCollectionProvider } from 'src/database/database.functions';
 import { DatabaseCollectionEnums } from 'src/database/database.interface';
+import { MembersService } from '../members/services/members/members.service';
 
-const providers: any[] = [GroupsService, GroupsAutomationService, generateCollectionProvider(DatabaseCollectionEnums.GROUPS)];
+const providers: any[] = [GroupsService, MembersService, GroupsAutomationService, generateCollectionProvider(DatabaseCollectionEnums.GROUPS)];
 const imports: any[] = [];
 
 

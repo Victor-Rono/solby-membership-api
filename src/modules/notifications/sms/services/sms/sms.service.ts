@@ -40,7 +40,6 @@ export class SmsService {
             message: 'Test SMs'
         };
         const send = this.sendSMS(message);
-        console.log({ send });
 
     }
 

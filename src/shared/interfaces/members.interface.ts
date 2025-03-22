@@ -14,7 +14,8 @@ export interface MemberInterface extends RecordInterface {
   email: string,
   phone: string,
   idNumber: string,
-  balance?: number,
+  outstandingBalance?: number,
+  savings?: number,
   // paymentInterval: PaymentIntervalEnum,
   currency: string,
   deductions?: string[],
@@ -27,7 +28,6 @@ export interface MemberInterface extends RecordInterface {
   status: MemberStatusEnum,
   registered?: boolean,
   groupId: string,
-
 }
 
 
@@ -42,4 +42,10 @@ export interface MembersDashboardInterface {
   membershipPieChart: PieChartInterface,
   revenueToday: number,
 
+}
+
+
+export interface MemberAccountInterface extends RecordInterface {
+  // memberId: string,s
+  amount: number,
 }

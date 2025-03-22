@@ -4,9 +4,9 @@ import { Injectable } from '@nestjs/common';
 import { OnEvent } from '@nestjs/event-emitter';
 import { BaseAutomationService } from 'src/modules/base/base-automation/base-automation.service';
 import { MemberEventsEnum } from './members-events.enum';
-import { MemberInterface } from 'src/shared/interfaces/members.interface';
+import { MemberAccountInterface, MemberInterface } from 'src/shared/interfaces/members.interface';
 import { SubscriptionInterface, SubscriptionTypeEnum } from 'src/shared/interfaces/subscriptions.interface';
-import { DatabaseCollectionEnums } from 'src/database/database.interface';
+import { DatabaseCollectionEnums, DBRequestInterface } from 'src/database/database.interface';
 import { InvoiceCategoryEnum, InvoiceEnums, InvoiceInterface, InvoiceItemsInterface, InvoiceUserTypeEnum, PurchaseTypeEnum } from 'src/modules/invoices/invoices.interface';
 import { getBeginningOfDayFromDate } from 'src/shared/functions/date-time.functions';
 import { generateUniqueId } from 'src/database/database.functions';
@@ -94,4 +94,6 @@ export class MembersAutomationService extends BaseAutomationService {
         const message = `Hello ${member.name}, Welcome to our Membership platform. To continue, please pay your membership fee.`;
         return message;
     }
+
+
 }

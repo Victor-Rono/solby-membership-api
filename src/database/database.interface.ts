@@ -21,6 +21,7 @@ export enum DatabaseCollectionEnums {
 
     // Membership
     MEMBERS = 'members',
+    MEMBER_ACCOUNTS = 'member-accounts',
     GROUPS = 'groups',
 
 

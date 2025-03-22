@@ -30,8 +30,8 @@ export function farmersTableTemplate(
                   <td style="padding: 10px; border: 1px solid #ddd; text-align: left;">${entry.name}</td>
                   <td style="padding: 10px; border: 1px solid #ddd; text-align: left;">${entry.phone}</td>
                   <td style="padding: 10px; border: 1px solid #ddd; text-align: left;">${entry.email}</td>
-                  <td style="padding: 10px; border: 1px solid #ddd; text-align: left; color: ${entry.balance < 0 ? '#ff0000' : '#0b930b'};">
-                    ${'KES ' + (entry.balance || 0).toFixed(2)}
+                  <td style="padding: 10px; border: 1px solid #ddd; text-align: left; color: ${entry.outstandingBalance < 0 ? '#ff0000' : '#0b930b'};">
+                    ${'KES ' + (entry.outstandingBalance || 0).toFixed(2)}
                   </td>             
                 </tr>
               `;

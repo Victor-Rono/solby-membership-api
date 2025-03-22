@@ -138,7 +138,6 @@ export class AuthService extends BaseService<any, any, any, any> {
         const usersFromDb: UserInterface[] = await this.databaseService.getItemsByField({ field: 'email', value: email, collection: DatabaseCollectionEnums.USERS, organizationId });
         const user = usersFromDb[0] || null;
 
-        console.log({ user });
 
         if (!user) {
             return { token: null, user: null };
@@ -148,7 +147,6 @@ export class AuthService extends BaseService<any, any, any, any> {
 
         if (!user.verified) {
             const createCredentials = await this.createUserCredentials({ userId: user.id, password });
-            console.log({ user, token });
 
             return { token, user };
 
