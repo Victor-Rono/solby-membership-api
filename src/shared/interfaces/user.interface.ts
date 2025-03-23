@@ -28,7 +28,7 @@ export interface UserInterface extends RecordInterface {
   admin?: boolean,
   creditor?: boolean,
   debtor?: boolean,
-  employee?: boolean,
+  member?: boolean,
 }
 
 export interface UserRegistrationInterface {

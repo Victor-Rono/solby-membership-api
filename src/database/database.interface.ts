@@ -10,6 +10,7 @@ export type DBStatusTypes =
     | 'Hidden';
 
 
+
 export enum DatabaseCollectionEnums {
 
     // Dashboard
@@ -20,7 +21,8 @@ export enum DatabaseCollectionEnums {
     SUBSCRIPTIONS_CONFIG = 'subscriptions-config',
 
     // Membership
-    MEMBERS = 'members',
+    // MEMBERS = 'members',
+    MEMBERS = 'users',
     MEMBER_ACCOUNTS = 'member-accounts',
     GROUPS = 'groups',
 
@@ -33,6 +35,7 @@ export enum DatabaseCollectionEnums {
     OTP = 'otp',
     CREDENTIALS = 'credentials_',
     PASSWORD_RESETS = 'password-resets_',
+    MEMBER_USER = 'member-users',
 
     // MILKING
     MILKING_REPORTS = 'milking-reports',
@@ -167,6 +170,8 @@ export enum DatabaseCollectionEnums {
     MT_REVENUE_CATEGORIES = `mt_revenue-categories`,
 
     SERIAL_NUMBERS = 'serial-numbers',
+
+    EMAILS = 'emails',
 
 }
 

@@ -10,6 +10,8 @@ import { isToday, jumpToXNumberOfDays } from "victor-dev-toolbox"
 import { BaseService } from 'src/modules/base/base.service';
 import { SmsService } from 'src/modules/notifications/sms/services/sms/sms.service';
 import { InvoiceInterface, PayForInvoicesInterface, InvoiceEnums, InvoiceRevenueInterface, InvoiceStatsInterface } from 'src/modules/invoices/invoices.interface';
+import { ProdFrontendURL } from 'src/shared/data/application.data';
+import { SMSEventsEnum } from 'src/shared/interfaces/sms.interface';
 
 @Injectable()
 export class InvoicesService extends BaseService<any, any, any, any> {
@@ -61,7 +63,7 @@ export class InvoicesService extends BaseService<any, any, any, any> {
             const save = await this.create({ payload: invoiceToSave, organizationId });
 
             // Notify the buyer
-            const message = `You have a new invoice from ${invoiceToSave.sellerName || 'Maziwa tele'} for KES ${invoiceToSave.totalAmount}. Please Click on the link to see details: https://erp.maziwatele.com/invoices/view/${invoiceToSave.id}. Thank you.`;
+            const message = `You have a new invoice from ${invoiceToSave.sellerName || 'Maziwa tele'} for KES ${invoiceToSave.totalAmount}. Please Click on the link to see details: ${ProdFrontendURL}/invoices/view/${invoiceToSave.id}. Thank you.`;
             invoiceToSave.serialNumber = save.serialNumber;
             await this.notifyBuyer({ organizationId, invoice: invoiceToSave, amount: invoiceToSave.totalAmount.toString(), msg: message });
 
@@ -269,7 +271,7 @@ export class InvoicesService extends BaseService<any, any, any, any> {
             message = `Hello ${user.name}, your payment for invoice ${invoice.serialNumber} has been completed. ${url}`;
         }
 
-        const sms = await this.smsService.sendSMS({
+        const sms = await this.eventEmitter.emit(SMSEventsEnum.SEND_SMS, {
             organizationId,
             phone: user.phone,
             message,

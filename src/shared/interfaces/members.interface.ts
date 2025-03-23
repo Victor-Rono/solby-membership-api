@@ -1,6 +1,7 @@
 /* eslint-disable prettier/prettier */
 import { BarChartInterface, PieChartInterface } from "./apex.interface";
 import { RecordInterface } from "./record.interface";
+import { UserInterface } from "./user.interface";
 
 
 export enum MemberStatusEnum {
@@ -8,7 +9,7 @@ export enum MemberStatusEnum {
   INACTIVE = 'INACTIVE',
 }
 
-export interface MemberInterface extends RecordInterface {
+export interface MemberInterface extends UserInterface {
   userId: string,
   name: string,
   email: string,
@@ -29,6 +30,7 @@ export interface MemberInterface extends RecordInterface {
   registered?: boolean,
   groupId: string,
   groupAdmin?: string[],
+  verified?: boolean,
 
 }
 

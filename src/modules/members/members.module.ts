@@ -8,8 +8,10 @@ import { generateCollectionProvider } from 'src/database/database.functions';
 import { DatabaseCollectionEnums } from 'src/database/database.interface';
 import { InvoiceManagerService } from '../invoices/services/invoice-manager/invoice-manager.service';
 import { MemberSubscriptionsService } from './services/member-subscriptions/member-subscriptions.service';
+import { AuthModule } from '../auth/auth.module';
+import { UsersModule } from '../users/users.module';
 
-const imports: any[] = [];
+const imports: any[] = [AuthModule, UsersModule];
 const providers: any[] = [MembersService, MembersAutomationService, InvoiceManagerService, MemberSubscriptionsService, generateCollectionProvider(DatabaseCollectionEnums.MEMBERS)];
 
 @Module({

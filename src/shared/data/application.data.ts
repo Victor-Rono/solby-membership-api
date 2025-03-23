@@ -2,9 +2,9 @@
 import { ApplicationDataInterface } from "../interfaces/application.interface";
 
 export const DefaultApplicationData: ApplicationDataInterface = {
-  title: 'Swift ERP',
-  shortName: 'Swift ERP',
-  fullName: 'Swift ERP Sales Management System',
+  title: 'Solby',
+  shortName: 'EJK - NORTH RIFT',
+  fullName: 'ELDORET JUA KALI ASSOCIATION NORTH RIFT',
   version: '1.0.0',
 
 }
@@ -12,8 +12,9 @@ export const DefaultApplicationData: ApplicationDataInterface = {
 // Urls
 
 export const DevFrontendURL = 'http://localhost:4200';
-export const ProdFrontendURL = 'https://erp.maziwatele.com';
-export const DevBackendURL = 'http://localhost:3033';
-export const ProdBackendURL = 'https://maziwatele.lancolatech.co.ke';
+export const ProdFrontendURL = 'https://members.solby.io';
+export const DevBackendURL = 'http://localhost:3032';
+// export const DevBackendURL = 'http://localhost:3000';
+export const ProdBackendURL = 'https://solby-membership-five.vercel.app';
 
-export const AppTagline = ` A Robust ERP management Software for all Sectors`
+export const AppTagline = "Solby Membership, your gateway to a world of opportunities.";

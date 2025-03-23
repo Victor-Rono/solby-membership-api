@@ -7,10 +7,13 @@ import { TokensModule } from '../tokens/tokens.module';
 import { AuthService } from './services/auth/auth.service';
 import { JwtModule } from '@nestjs/jwt';
 
+const providers: any[] = [AuthService, generateCollectionProvider(DatabaseCollectionEnums.AUTH)];
+const imports: any[] = [TokensModule, JwtModule];
 @Module({
   controllers: [AuthController],
-  providers: [AuthService, generateCollectionProvider(DatabaseCollectionEnums.AUTH)],
-  imports: [TokensModule, JwtModule],
+  providers,
+  imports,
+  exports: imports.concat(providers)
 
 })
 export class AuthModule { }

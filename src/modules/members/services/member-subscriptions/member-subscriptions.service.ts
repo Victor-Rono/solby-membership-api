@@ -14,15 +14,19 @@ import { SubscriptionConfigInterface, SubscriptionInterface, SubscriptionTypeEnu
 import { generateUniqueId, getTotalForField, jumpToXNumberOfDays, resolveMultiplePromises } from "victor-dev-toolbox";
 import { MembersService } from "../members/members.service";
 import { totalForAllInvoices } from "src/shared/functions/invoices.functions";
+import { BaseAutomationService } from "src/modules/base/base-automation/base-automation.service";
+import { SMSEventsEnum } from '../../../../shared/interfaces/sms.interface';
 
 @Injectable()
-export class MemberSubscriptionsService {
+export class MemberSubscriptionsService extends BaseAutomationService {
     constructor(
-        private databaseService: DatabaseService,
+        // private databaseService: DatabaseService,
         private smsService: SmsService,
         private membersService: MembersService,
 
-    ) { }
+    ) {
+        super();
+    }
 
     async sendSubscriptions() {
         const organizations: TenantInterface[] = await this.databaseService.getAllItems({
@@ -162,7 +166,7 @@ export class MemberSubscriptionsService {
                 message,
                 organizationId
             };
-            this.smsService.sendSMS(sms);
+            this.eventEmitter.emit(SMSEventsEnum.SEND_SMS, sms);
 
         });
 
@@ -188,7 +192,7 @@ export class MemberSubscriptionsService {
 
     private async getAllMembersWithPendingInvoices(organizationId: string): Promise<MemberInterface[]> {
         const filteredMembers: MemberInterface[] = [];
-        const members: MemberInterface[] = await this.databaseService.getAllItems({ organizationId, collection: DatabaseCollectionEnums.MEMBERS });
+        const members: MemberInterface[] = await this.membersService.getAll(organizationId);
         const memberAccounts: MemberAccountInterface[] = await this.databaseService.getAllItems({ organizationId, collection: DatabaseCollectionEnums.MEMBER_ACCOUNTS });
         const query = {
             $expr: {

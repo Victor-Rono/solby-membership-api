@@ -28,7 +28,6 @@ export class GroupsService extends BaseService<any, any, any, any> {
         const { organizationId, id } = request;
         const group = await this.getById(request);
         if (!group) return null;
-        // const members: MemberInterface[] = await this.databaseService.getItemsByField({ organizationId, field: 'groupId', value: id, collection: DatabaseCollectionEnums.MEMBERS });
         const members: MemberInterface[] = await this.membersService.getByField({ organizationId, payload: { field: 'groupId', value: id } });
         // const All = await this.membersService.getAll(organizationId);
         // const members = All.filter(m => m.groupId === id);
@@ -43,7 +42,8 @@ export class GroupsService extends BaseService<any, any, any, any> {
     }
 
     async getGroupDashboard(organizationId: string, groupId: string): Promise<GroupDashboardInterface> {
-        const members: MemberInterface[] = await this.databaseService.getItemsByField({ organizationId, collection: DatabaseCollectionEnums.MEMBERS, field: 'groupId', value: groupId });
+        const members: MemberInterface[] = await this.membersService.getByField({ organizationId, payload: { field: 'groupId', value: groupId } });
+
         const query = {
             $expr: {
                 $and: [
@@ -97,7 +97,7 @@ export class GroupsService extends BaseService<any, any, any, any> {
             group.members = members.length;
             allGroups.push(group);
         } else {
-            const members: MemberInterface[] = await this.databaseService.getAllItems({ organizationId, collection: DatabaseCollectionEnums.MEMBERS, });
+            const members: MemberInterface[] = await this.membersService.getAll(organizationId);
             groups.forEach(g => {
                 const filtered = members.filter(m => m.groupId === g.id);
                 g.members = filtered.length;

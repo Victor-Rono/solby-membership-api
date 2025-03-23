@@ -162,6 +162,8 @@ export class AuthService extends BaseService<any, any, any, any> {
 
     }
 
+
+
     async resetPassword(data: DBRequestInterface): Promise<boolean> {
         const { organizationId, payload } = data;
         const { email } = payload;
@@ -232,7 +234,7 @@ export class AuthService extends BaseService<any, any, any, any> {
         const update = await this.databaseService.updateItem({ id: userId, collection: DatabaseCollectionEnums.CREDENTIALS, itemDto: { password: hashedPassword }, organizationId: '' });
         return update;
     }
-
+    x
     async verifyPassword(data: { userId: string, password: string }): Promise<boolean> {
         const { userId, password } = data;
 

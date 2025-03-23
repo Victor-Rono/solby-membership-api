@@ -20,19 +20,20 @@ import { SMSEventsEnum, SMSInterface } from 'src/shared/interfaces/sms.interface
 import { TenantInterface } from 'src/modules/tenants/interfaces/tenants.interface';
 import { DefaultAccountEnums } from 'src/modules/accounting/accounting.interface';
 import { InvoiceManagerService } from 'src/modules/invoices/services/invoice-manager/invoice-manager.service';
+import { UsersService } from 'src/modules/users/services/users/users.service';
+import { convertMemberToUser } from 'src/shared/functions/members.functions';
 
 const collection = DatabaseCollectionEnums.INVOICES;
 
 
 @Injectable()
 export class MembersService extends BaseService<any, any, any, any> {
-    collection: DatabaseCollectionEnums = DatabaseCollectionEnums.MEMBERS;
 
     constructor(
         private emailService: EmailsService,
         private pdfService: PdfService,
         private invoiceManagerService: InvoiceManagerService,
-
+        private usersService: UsersService,
 
     ) {
         super();
@@ -128,54 +129,80 @@ export class MembersService extends BaseService<any, any, any, any> {
 
     // Add Creditor
     override async create(data: CreateRequestInterface) {
-
         const { payload, organizationId } = data;
-        return new Promise<any>(async (resolve, reject) => {
-            const CreditorsWithSimilarName = await this.getByField(
-                // { field: 'userId', value: Creditor.userId, organizationId, },
-                {
-                    payload: {
-                        field: 'phone',
-                        value: payload.phone,
-                    },
+        const outstandingBalance = payload.outstandingBalance || 0;
+        const savings = payload.savings || 0;
+        delete payload.overpayment;
+        delete payload.outstandingBalance;
+        const user: UserInterface = convertMemberToUser({ organizationId, member: payload });
+        const member = await this.usersService.registerUser({ id: user.id, organizationId, user, permissions: [] });
 
-                    organizationId,
-                }
+        if (outstandingBalance) {
+            this.saveOutstandingBalance({ organizationId, member, amount: outstandingBalance });
+        }
 
-            );
-            if (CreditorsWithSimilarName.length) {
-                const notification = createNotification(
-                    'error',
-                    `The User is already a Member`,
-                );
-                resolve({ notification });
-                return;
-            }
-            const id = payload.id || generateUniqueId();
-            // payload.status = MemberStatusEnum.INACTIVE;
-            payload.status = MemberStatusEnum.ACTIVE;
-
-            const outstandingBalance = payload.outstandingBalance || 0;
-            const overpayment = payload.overpayment || 0;
-            delete payload.overpayment;
-            delete payload.outstandingBalance;
-
-            const member = await super.create({ id, payload, organizationId });
-            if (outstandingBalance) {
-                this.saveOutstandingBalance({ organizationId, member, amount: outstandingBalance });
-            }
-
-            if (overpayment) {
-                this.saveOverpayment({ member, organizationId, amount: overpayment });
-            }
-            const notification = createNotification('success', 'Member created successfully');
-            member.notification = notification;
-            this.eventEmitter.emit(MemberEventsEnum.MEMBER_CREATED, { member, organizationId })
-
-            resolve(member);
-
-        });
+        if (savings) {
+            this.saveOverpayment({ member, organizationId, amount: savings });
+        }
+        const notification = createNotification('success', 'Member created successfully');
+        member.notification = notification;
+        this.eventEmitter.emit(MemberEventsEnum.MEMBER_CREATED, { member, organizationId })
     }
+
+
+    // override async create(data: CreateRequestInterface) {
+
+    //     const { payload, organizationId } = data;
+    //     return new Promise<any>(async (resolve, reject) => {
+    //         const existingMembers: MemberInterface[] = await this.databaseService.getAllItems({ collection: DatabaseCollectionEnums.MEMBERS, organizationId });
+
+
+
+    //         const CreditorsWithSimilarName = await this.getByField(
+    //             // { field: 'userId', value: Creditor.userId, organizationId, },
+    //             {
+    //                 payload: {
+    //                     field: 'phone',
+    //                     value: payload.phone,
+    //                 },
+
+    //                 organizationId,
+    //             }
+
+    //         );
+    //         if (CreditorsWithSimilarName.length) {
+    //             const notification = createNotification(
+    //                 'error',
+    //                 `The User is already a Member`,
+    //             );
+    //             resolve({ notification });
+    //             return;
+    //         }
+    //         const id = payload.id || generateUniqueId();
+    //         // payload.status = MemberStatusEnum.INACTIVE;
+    //         payload.status =x
+
+    //         const outstandingBalance = payload.outstandingBalance || 0;
+    //         const overpayment = payload.overpayment || 0;
+    //         delete payload.overpayment;
+    //         delete payload.outstandingBalance;
+
+    //         const member = await super.create({ id, payload, organizationId });
+    //         if (outstandingBalance) {
+    //             this.saveOutstandingBalance({ organizationId, member, amount: outstandingBalance });
+    //         }
+
+    //         if (overpayment) {
+    //             this.saveOverpayment({ member, organizationId, amount: overpayment });
+    //         }
+    //         const notification = createNotification('success', 'Member created successfully');
+    //         member.notification = notification;
+    //         this.eventEmitter.emit(MemberEventsEnum.MEMBER_CREATED, { member, organizationId })
+
+    //         resolve(member);
+
+    //     });
+    // }
 
     async getUserByFields(organizationId: string, fields: FieldValueInterface[]): Promise<UserInterface | null> {
         const query: MultipleFieldRequestInterface = {
@@ -304,14 +331,13 @@ export class MembersService extends BaseService<any, any, any, any> {
 
 
         const { startDate, stopDate } = payload;
-        const collection = DatabaseCollectionEnums.MEMBERS;
         // if (field === 'buyerId') {
         //     collection = DatabaseCollectionEnums.DEBTORS;
         //     invoiceType = 'Debtor';
         // }
         const resolved = await resolveMultiplePromises([
             this.getSingleMemberInvoicesByDateRange(request),
-            this.databaseService.getItemsByField({ organizationId, field: 'id', value: id, collection }),
+            this.getByField({ organizationId, payload: { field: 'id', value: id, } }),
             this.databaseService.getItem({ organizationId, id: organizationId, collection: DatabaseCollectionEnums.ORGANIZATIONS }),
         ]);
 
@@ -514,7 +540,9 @@ export class MembersService extends BaseService<any, any, any, any> {
         let invoices: InvoiceInterface[] = [];
         if (!members.length) return allMembers;
         if (members.length === 1) {
+
             const member = members[0];
+            if (!member.member) return allMembers
             invoices = await this.getAllPendingSingleMemberInvoices({ id: member.id, organizationId });
             const memberAccount: MemberAccountInterface = await this.getMemberAccount({ organizationId, id: member.id });
             const totals = totalForAllInvoices(invoices);
@@ -525,6 +553,7 @@ export class MembersService extends BaseService<any, any, any, any> {
             invoices = await this.getAllPendingInvoices({ organizationId });
             const memberAccounts: MemberAccountInterface[] = await this.databaseService.getAllItems({ organizationId, collection: DatabaseCollectionEnums.MEMBER_ACCOUNTS });
             members.forEach(m => {
+                if (!m.member) return;
                 const memberAccount = memberAccounts.find(ma => ma.id === m.id);
                 const memberInvoices = invoices.filter(i => i.buyerId === m.id);
                 const totals = totalForAllInvoices(memberInvoices);

@@ -1,5 +1,6 @@
 /* eslint-disable prettier/prettier */
 export interface SMSInterface {
+    id?: string,
     organizationId: string,
     phone: string;
     message: string;
