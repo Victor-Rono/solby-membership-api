@@ -5,7 +5,7 @@ import { BaseService } from 'src/modules/base/base.service';
 import { InvoiceInterface } from 'src/modules/invoices/invoices.interface';
 import { MembersService } from 'src/modules/members/services/members/members.service';
 import { totalForAllInvoices } from 'src/shared/functions/invoices.functions';
-import { GroupDashboardInterface, SingleGroupInterface } from 'src/shared/interfaces/groups.interface';
+import { GroupDashboardInterface, GroupInterface, SingleGroupInterface } from 'src/shared/interfaces/groups.interface';
 import { MemberAccountInterface, MemberInterface } from 'src/shared/interfaces/members.interface';
 import { getFieldValuesFromArray } from 'victor-dev-toolbox';
 
@@ -16,6 +16,12 @@ export class GroupsService extends BaseService<any, any, any, any> {
 
     ) {
         super();
+    }
+
+    override async getAll(organizationId: string): Promise<any[]> {
+        const groups = await super.getAll(organizationId);
+        return this.countGroupMembers({ groups, organizationId });
+
     }
 
     async getGroupStats(request: DBRequestInterface): Promise<SingleGroupInterface | null> {
@@ -79,6 +85,29 @@ export class GroupsService extends BaseService<any, any, any, any> {
         const filtered = groupAdmin.filter(g => g !== groupId);
         return this.membersService.update({ id: memberId, payload: { groupAdmin: filtered }, organizationId })
     }
+
+    private async countGroupMembers(payload: { groups: GroupInterface[], organizationId: string }) {
+        const { groups, organizationId } = payload;
+        const allGroups: GroupInterface[] = [];
+        let members: MemberInterface[] = [];
+        if (!groups.length) return allGroups;
+        if (groups.length === 1) {
+            const group = groups[0];
+            members = await this.membersService.getByField({ organizationId, payload: { field: 'groupId', value: group.id } });
+            group.members = members.length;
+            allGroups.push(group);
+        } else {
+            const members: MemberInterface[] = await this.databaseService.getAllItems({ organizationId, collection: DatabaseCollectionEnums.MEMBERS, });
+            groups.forEach(g => {
+                const filtered = members.filter(m => m.groupId === g.id);
+                g.members = filtered.length;
+                allGroups.push(g);
+            })
+        }
+        return allGroups;
+    }
+
+
 
 
 }

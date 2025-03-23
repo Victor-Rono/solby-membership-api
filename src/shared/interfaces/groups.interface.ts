@@ -5,6 +5,7 @@ import { RecordInterface } from "./record.interface";
 export interface GroupInterface extends RecordInterface {
     name: string,
     description: string,
+    members?: number,
 }
 
 export interface SingleGroupInterface {
