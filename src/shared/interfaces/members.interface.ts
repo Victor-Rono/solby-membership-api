@@ -28,6 +28,8 @@ export interface MemberInterface extends RecordInterface {
   status: MemberStatusEnum,
   registered?: boolean,
   groupId: string,
+  groupAdmin?: string[],
+
 }
 
 

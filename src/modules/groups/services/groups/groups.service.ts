@@ -60,5 +60,25 @@ export class GroupsService extends BaseService<any, any, any, any> {
 
     }
 
+    async makeAdmin(request: DBRequestInterface) {
+        const { organizationId, payload } = request;
+        const { memberId, groupId } = payload;
+        const member: MemberInterface = await this.membersService.getById({ id: memberId, organizationId });
+        if (!member) throw new Error("Member Not Found");
+        const groupAdmin = member.groupAdmin || [];
+        groupAdmin.push(groupId);
+        return this.membersService.update({ id: memberId, payload: { groupAdmin }, organizationId })
+    }
+
+    async removeAdmin(request: DBRequestInterface) {
+        const { organizationId, payload } = request;
+        const { memberId, groupId } = payload;
+        const member: MemberInterface = await this.membersService.getById({ id: memberId, organizationId });
+        if (!member) throw new Error("Member Not Found");
+        const groupAdmin = member.groupAdmin || [];
+        const filtered = groupAdmin.filter(g => g !== groupId);
+        return this.membersService.update({ id: memberId, payload: { groupAdmin: filtered }, organizationId })
+    }
+
 
 }
