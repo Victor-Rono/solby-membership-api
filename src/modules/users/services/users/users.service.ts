@@ -32,7 +32,7 @@ export class UsersService extends BaseService<any, any, any, any> {
 
         users.forEach((user: UserInterface) => {
             const organizations = user.organizations || [];
-            if (organizations.includes(organizationId) && !user.member) {
+            if (organizations.includes(organizationId) && user.admin) {
                 orgUsers.push(user);
             }
         });

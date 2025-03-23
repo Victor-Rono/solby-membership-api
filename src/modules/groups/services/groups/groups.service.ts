@@ -71,9 +71,9 @@ export class GroupsService extends BaseService<any, any, any, any> {
         const { memberId, groupId } = payload;
         const member: MemberInterface = await this.membersService.getById({ id: memberId, organizationId });
         if (!member) throw new Error("Member Not Found");
-        const groupAdmin = member.groupAdmin || [];
-        groupAdmin.push(groupId);
-        return this.membersService.update({ id: memberId, payload: { groupAdmin }, organizationId })
+        const adminGroups = member.adminGroups || [];
+        adminGroups.push(groupId);
+        return this.membersService.update({ id: memberId, payload: { adminGroups }, organizationId })
     }
 
     async removeAdmin(request: DBRequestInterface) {
@@ -81,9 +81,9 @@ export class GroupsService extends BaseService<any, any, any, any> {
         const { memberId, groupId } = payload;
         const member: MemberInterface = await this.membersService.getById({ id: memberId, organizationId });
         if (!member) throw new Error("Member Not Found");
-        const groupAdmin = member.groupAdmin || [];
-        const filtered = groupAdmin.filter(g => g !== groupId);
-        return this.membersService.update({ id: memberId, payload: { groupAdmin: filtered }, organizationId })
+        const adminGroups = member.adminGroups || [];
+        const filtered = adminGroups.filter(g => g !== groupId);
+        return this.membersService.update({ id: memberId, payload: { adminGroups: filtered }, organizationId })
     }
 
     private async countGroupMembers(payload: { groups: GroupInterface[], organizationId: string }) {

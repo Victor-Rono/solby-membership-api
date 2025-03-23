@@ -11,7 +11,7 @@ import { invoicesTemplate } from 'src/modules/invoices/templates/invoices.templa
 import { getBeginningOfDayFromDate, getFullDateRange } from 'src/shared/functions/date-time.functions';
 import { totalForAllInvoices, totalForSingleInvoice } from 'src/shared/functions/invoices.functions';
 import { createNotification } from 'src/shared/functions/notifications.functions';
-import { MemberAccountInterface, MemberInterface, MemberStatusEnum } from 'src/shared/interfaces/members.interface';
+import { MemberAccountInterface, MemberInterface, MembersDashboardInterface, MembershipDashboardInterface, MemberStatusEnum } from 'src/shared/interfaces/members.interface';
 import { OrganizationInterface } from 'src/shared/interfaces/organization.interface';
 import { UserRegistrationInterface, UserInterface } from 'src/shared/interfaces/user.interface';
 import { getTotalForField, sortArrayByKey, resolveMultiplePromises, generateUniqueId, FieldValueInterface, getItemsWithinDateRange, dayMonthYear } from 'victor-dev-toolbox';
@@ -34,6 +34,7 @@ export class MembersService extends BaseService<any, any, any, any> {
         private pdfService: PdfService,
         private invoiceManagerService: InvoiceManagerService,
         private usersService: UsersService,
+
 
     ) {
         super();
@@ -568,6 +569,42 @@ export class MembersService extends BaseService<any, any, any, any> {
     }
 
     // await this.notifyMember({ organizationId, id, amountDeducted: totalDeducted });
+    async getMembershipDashboardById(request: DBRequestInterface): Promise<MembershipDashboardInterface> {
+        const { organizationId, id } = request;
+
+        // Fetch data concurrently
+        const [member, pendingInvoices, account, groups] = await Promise.all([
+            this.getById({ organizationId, id }),
+            this.getAllPendingSingleMemberInvoices({ id, organizationId }),
+            this.getMemberAccount({ organizationId, id }),
+            this.databaseService.getAllItems({ organizationId, collection: DatabaseCollectionEnums.GROUPS })
+        ]);
+
+        // Process data after fetching
+        const invoiceTotals = totalForAllInvoices(pendingInvoices);
+        const adminGroups = groups.filter(g => member.adminGroups?.includes(g.id));
+        const group = groups.find(g => g.id === member.groupId);
+
+        return { member, pendingInvoices, invoiceTotals, group, adminGroups, account };
+    }
+
+
+    async getGroups(request: DBRequestInterface) {
+        const { organizationId, id } = request;
+
+        // Fetch member and groups concurrently
+        const [member, groups] = await Promise.all([
+            this.getById({ organizationId, id }),
+            this.databaseService.getAllItems({ organizationId, collection: DatabaseCollectionEnums.GROUPS })
+        ]);
+
+        // Process the groups data
+        const adminGroups = groups.filter(g => member.adminGroups.includes(g.id));
+        const group = groups.find(g => g.id === member.groupId);
+
+        return { adminGroups, group };
+    }
+
 }
 
 

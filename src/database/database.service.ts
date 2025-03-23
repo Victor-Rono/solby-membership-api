@@ -203,7 +203,7 @@ export class DatabaseService implements DATABASE_INTERFACE {
         const nextSerial = serialNumber + 1;
         const randomPart = generateRandomString(4).toUpperCase();
         const year = new Date().getFullYear();
-        const fullSerial = `SB-${serialNumber.toString().padStart(3, '0')}-${randomPart}-${year}`
+        const fullSerial = `EJK-${serialNumber.toString().padStart(3, '0')}-${randomPart}-${year}`
         if (!serial) {
             this.DBservice.createItem({ id: collection, organizationId, itemDto: { number: nextSerial }, collection: serialNumbersCollection })
         } else {

@@ -1,7 +1,9 @@
 /* eslint-disable prettier/prettier */
+import { InvoiceCalculationInterface, InvoiceInterface } from "src/modules/invoices/invoices.interface";
 import { BarChartInterface, PieChartInterface } from "./apex.interface";
 import { RecordInterface } from "./record.interface";
 import { UserInterface } from "./user.interface";
+import { GroupInterface } from "./groups.interface";
 
 
 export enum MemberStatusEnum {
@@ -29,7 +31,7 @@ export interface MemberInterface extends UserInterface {
   status: MemberStatusEnum,
   registered?: boolean,
   groupId: string,
-  groupAdmin?: string[],
+  adminGroups?: string[],
   verified?: boolean,
 
 }
@@ -52,4 +54,13 @@ export interface MembersDashboardInterface {
 export interface MemberAccountInterface extends RecordInterface {
   // memberId: string,s
   amount: number,
+}
+
+export interface MembershipDashboardInterface {
+  member: MemberInterface,
+  account: MemberAccountInterface,
+  pendingInvoices: InvoiceInterface[],
+  invoiceTotals: InvoiceCalculationInterface,
+  adminGroups: GroupInterface[],
+  group: GroupInterface,
 }

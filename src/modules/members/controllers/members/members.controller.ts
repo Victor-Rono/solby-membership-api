@@ -111,8 +111,15 @@ export class MembersController extends BaseController<any, any, any, any> {
         return invoice;
     }
 
+
+
     // @Get('emit/event')
     // emit() {
     //     return this.service.emitEvent();
     // }
+    @Get('dashboard/:id')
+    async membershipDashboard(@Param('id') id, @Headers() headers: any,) {
+        const payload = prepareRequest({ id, headers });
+        return this.service.getMembershipDashboardById(payload);
+    }
 }
