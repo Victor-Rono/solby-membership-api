@@ -32,8 +32,8 @@ export class SmsService {
         })
     }
 
-    @OnEvent(SMSEventsEnum.SED_TEST_SMS)
-    sendTestsSms() {
+    @OnEvent(SMSEventsEnum.SEND_SMS)
+    sendTestsSms(sms: SMSInterface) {
         const message: SMSInterface = {
             organizationId: 'AAAA',
             phone: '0795349039',

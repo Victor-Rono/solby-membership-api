@@ -7,5 +7,6 @@ export interface SMSInterface {
 }
 
 export enum SMSEventsEnum {
-    SED_TEST_SMS = 'Send Test Sms'
+    SEND_SMS = 'Send Sms',
+
 }

@@ -16,9 +16,10 @@ import { OrganizationInterface } from 'src/shared/interfaces/organization.interf
 import { UserRegistrationInterface, UserInterface } from 'src/shared/interfaces/user.interface';
 import { getTotalForField, sortArrayByKey, resolveMultiplePromises, generateUniqueId, FieldValueInterface, getItemsWithinDateRange, dayMonthYear } from 'victor-dev-toolbox';
 import { MemberEventsEnum } from '../members-automation/members-events.enum';
-import { SMSEventsEnum } from 'src/shared/interfaces/sms.interface';
+import { SMSEventsEnum, SMSInterface } from 'src/shared/interfaces/sms.interface';
 import { TenantInterface } from 'src/modules/tenants/interfaces/tenants.interface';
 import { DefaultAccountEnums } from 'src/modules/accounting/accounting.interface';
+import { InvoiceManagerService } from 'src/modules/invoices/services/invoice-manager/invoice-manager.service';
 
 const collection = DatabaseCollectionEnums.INVOICES;
 
@@ -30,6 +31,9 @@ export class MembersService extends BaseService<any, any, any, any> {
     constructor(
         private emailService: EmailsService,
         private pdfService: PdfService,
+        private invoiceManagerService: InvoiceManagerService,
+
+
     ) {
         super();
     }
@@ -479,5 +483,51 @@ export class MembersService extends BaseService<any, any, any, any> {
         return createAccount;
     }
 
+    async resolveInvoicePayments(request: { id: string, organizationId: string }) {
+        const { id, organizationId } = request;
+        const account = await this.databaseService.getItem({ organizationId, id, collection: DatabaseCollectionEnums.MEMBER_ACCOUNTS });
+        const currentAmount = account?.amount;
+        if (!currentAmount) return;
+
+        const invoices = await this.getAllPendingSingleMemberInvoices({ id, organizationId });
+        if (!invoices.length) return null;
+        const invoice = invoices[0];
+        let current = currentAmount;
+        let totalDeducted = 0; // Track the total deducted amount
+        const promises: any[] = [];
+
+        invoices.forEach(i => {
+            if (!current) return;
+            const pendingAmount = i.totalAmount - i.amountPaid;
+            let amountPaid = pendingAmount;
+
+            if (current >= pendingAmount) {
+                current -= pendingAmount;
+            } else {
+                amountPaid = current;
+                current = 0;
+            }
+
+            totalDeducted += amountPaid; // Accumulate the deducted amount
+            promises.push(this.invoiceManagerService.payForInvoice({ organizationId, payload: { amountPaid } }));
+        });
+
+        const resolved = await resolveMultiplePromises(promises);
+
+        // Notify the member about the deducted amount
+        const sms: SMSInterface = {
+            organizationId,
+            message: `Hello ${invoice.buyerName}, KES ${totalDeducted} has been deducted from your account to pay for membership subscriptions.`,
+            phone: invoice.buyerPhone,
+        }
+        this.eventEmitter.emit(SMSEventsEnum.SEND_SMS, sms);
+
+    }
+    // await this.notifyMember({ organizationId, id, amountDeducted: totalDeducted });
 }
+
+
+
+
+
 

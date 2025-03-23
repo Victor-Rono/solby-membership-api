@@ -17,6 +17,7 @@ import { SMSInterface } from 'src/shared/interfaces/sms.interface';
 import { MembersService } from '../members/members.service';
 import { InvoiceManagerService } from 'src/modules/invoices/services/invoice-manager/invoice-manager.service';
 import { resolveMultiplePromises } from 'src/shared/functions/promises.functions';
+import { MemberSubscriptionsService } from '../member-subscriptions/member-subscriptions.service';
 
 @Injectable()
 export class MembersAutomationService extends BaseAutomationService {
@@ -24,6 +25,7 @@ export class MembersAutomationService extends BaseAutomationService {
         private smsService: SmsService,
         private membersService: MembersService,
         private invoiceManagerService: InvoiceManagerService,
+        private memberSubscriptionService: MemberSubscriptionsService,
     ) {
         super();
     }
@@ -33,6 +35,11 @@ export class MembersAutomationService extends BaseAutomationService {
         const saveInvoices = await this.createOneTimeSubscriptionInvoices(payload);
         // Add all to invoice
         //  Endpoint to process invoices and activate user
+    }
+
+    @OnEvent(MemberEventsEnum.SUBSCRIPTIONS)
+    async subscriptions() {
+        this.memberSubscriptionService.sendSubscriptions();
     }
 
     private async createOneTimeSubscriptionInvoices(payload: { member: MemberInterface, organizationId: string }) {
@@ -104,8 +111,6 @@ export class MembersAutomationService extends BaseAutomationService {
             promises.push(this.invoiceManagerService.payForInvoice({ organizationId, payload: { amountPaid } }));
         })
         const resolved = await resolveMultiplePromises(promises);
-
-
 
     }
 
