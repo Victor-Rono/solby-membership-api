@@ -9,7 +9,7 @@ import { farmerDocumentTemplate } from 'src/modules/farmers/templates/creditor-d
 import { InvoiceCategoryEnum, InvoiceEnums, InvoiceInterface, InvoiceUserTypeEnum } from 'src/modules/invoices/invoices.interface';
 import { invoicesTemplate } from 'src/modules/invoices/templates/invoices.template';
 import { getBeginningOfDayFromDate, getFullDateRange } from 'src/shared/functions/date-time.functions';
-import { totalForAllInvoices } from 'src/shared/functions/invoices.functions';
+import { totalForAllInvoices, totalForSingleInvoice } from 'src/shared/functions/invoices.functions';
 import { createNotification } from 'src/shared/functions/notifications.functions';
 import { MemberAccountInterface, MemberInterface, MemberStatusEnum } from 'src/shared/interfaces/members.interface';
 import { OrganizationInterface } from 'src/shared/interfaces/organization.interface';
@@ -40,22 +40,17 @@ export class MembersService extends BaseService<any, any, any, any> {
 
     override async getAll(organizationId:
         string): Promise<any[]> {
-        return this.getCreditorsAndInvoices(organizationId);
+        // return this.getCreditorsAndInvoices(organizationId);
+        const members = await super.getAll(organizationId);
+        return this.getMemberPayments({ organizationId, members });
     }
 
     override async getById(request: DBRequestInterface): Promise<any> {
         const { organizationId, id } = request;
         const Member: MemberInterface = await super.getById(request);
         if (!Member) return null;
-        const invoices = await this.getAllPendingInvoices(request);
-        const account = await this.databaseService.getItem({ organizationId, id, collection: DatabaseCollectionEnums.MEMBER_ACCOUNTS });
-
-        const totalAmount = getTotalForField(invoices, 'totalAmount');
-        const amountPaid = getTotalForField(invoices, 'amountPaid');
-        const balance = totalAmount - amountPaid;
-        Member.outstandingBalance = balance || 0;
-        Member.savings = account?.amount || 0;
-        return Member;
+        const members = await this.getMemberPayments({ organizationId, members: [Member] });
+        return members[0] || null;
     }
 
 
@@ -63,6 +58,7 @@ export class MembersService extends BaseService<any, any, any, any> {
 
 
     override async getByField(request: FieldValueRequestInterface): Promise<any[]> {
+
         const members: MemberInterface[] = await super.getByField(request);
 
         const query = {
@@ -72,20 +68,7 @@ export class MembersService extends BaseService<any, any, any, any> {
                 ]
             }
         };
-        const invoices = await this.databaseService.getAllItems({ organizationId: request.organizationId, collection: DatabaseCollectionEnums.INVOICES, query })
-
-        const finalMembers: MemberInterface[] = [];
-        members.forEach(m => {
-            const filtered = invoices.filter(i => i.buyerId === m.id);
-            const total = totalForAllInvoices(filtered);
-            m.outstandingBalance = total.totalDue || 0;
-            finalMembers.push(m);
-        });
-        // return finalMembers;
-        return sortArrayByKey('createdAt', 'ASC', finalMembers);
-
-
-
+        return this.getMemberPayments({ organizationId: request.organizationId, members });
     }
 
 
@@ -523,6 +506,38 @@ export class MembersService extends BaseService<any, any, any, any> {
         this.eventEmitter.emit(SMSEventsEnum.SEND_SMS, sms);
 
     }
+
+    private async getMemberPayments(payload: { organizationId: string, members: MemberInterface[] }): Promise<MemberInterface[]> {
+        const { organizationId, members } = payload;
+        const memberAccounts: MemberAccountInterface[] = [];
+        const allMembers: MemberInterface[] = [];
+        let invoices: InvoiceInterface[] = [];
+        if (!members.length) return allMembers;
+        if (members.length === 1) {
+            const member = members[0];
+            invoices = await this.getAllPendingSingleMemberInvoices({ id: member.id, organizationId });
+            const memberAccount: MemberAccountInterface = await this.getMemberAccount({ organizationId, id: member.id });
+            const totals = totalForAllInvoices(invoices);
+            member.outstandingBalance = totals.totalDue;
+            member.savings = memberAccount.amount;
+            allMembers.push(member);
+        } else {
+            invoices = await this.getAllPendingInvoices({ organizationId });
+            const memberAccounts: MemberAccountInterface[] = await this.databaseService.getAllItems({ organizationId, collection: DatabaseCollectionEnums.MEMBER_ACCOUNTS });
+            members.forEach(m => {
+                const memberAccount = memberAccounts.find(ma => ma.id === m.id);
+                const memberInvoices = invoices.filter(i => i.buyerId === m.id);
+                const totals = totalForAllInvoices(memberInvoices);
+                m.outstandingBalance = totals.totalDue;
+                m.savings = memberAccount?.amount || 0;
+                allMembers.push(m);
+            })
+
+        }
+        // const invoices = await this.getAllPendingInvoices({ organizationId });
+        return allMembers;
+    }
+
     // await this.notifyMember({ organizationId, id, amountDeducted: totalDeducted });
 }
 
