@@ -308,8 +308,9 @@ export class MembersService extends BaseService<any, any, any, any> {
     }
 
     async getAllPendingSingleMemberInvoices(request: DBRequestInterface): Promise<InvoiceInterface[]> {
-        const { organizationId, id } = request;
+        const { organizationId, id, payload } = request;
         // const { startDate, stopDate, field } = payload;
+        const invoiceIds: string[] = payload?.invoiceIds || [];
 
         const query = {
             $expr: {
@@ -321,7 +322,10 @@ export class MembersService extends BaseService<any, any, any, any> {
             }
         };
 
-        const invoices = await this.databaseService.getAllItems({ organizationId, query, collection });
+        let invoices = await this.databaseService.getAllItems({ organizationId, query, collection });
+        if (invoiceIds?.length > 0) {
+            invoices = invoices.filter((invoice: InvoiceInterface) => invoiceIds.includes(invoice.id));
+        }
         return invoices;
 
     }
@@ -493,13 +497,14 @@ export class MembersService extends BaseService<any, any, any, any> {
         return createAccount;
     }
 
-    async resolveInvoicePayments(request: { id: string, organizationId: string }) {
-        const { id, organizationId } = request;
+    async resolveInvoicePayments(request: DBRequestInterface) {
+        const { id, organizationId, payload } = request;
+        const { amount, invoiceIds } = payload;
         const account = await this.databaseService.getItem({ organizationId, id, collection: DatabaseCollectionEnums.MEMBER_ACCOUNTS });
-        const currentAmount = account?.amount;
+        const currentAmount = amount || account?.amount;
         if (!currentAmount) return;
 
-        const invoices = await this.getAllPendingSingleMemberInvoices({ id, organizationId });
+        const invoices = await this.getAllPendingSingleMemberInvoices({ id, organizationId, payload: { invoiceIds } });
         if (!invoices.length) return null;
         const invoice = invoices[0];
         let current = currentAmount;

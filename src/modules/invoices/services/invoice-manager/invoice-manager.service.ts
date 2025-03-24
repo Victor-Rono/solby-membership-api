@@ -294,9 +294,7 @@ export class InvoiceManagerService {
         const amount = amountPaid;
         // const { id, amountPaid } = payload;
 
-        const invoiceTypesToUpdate = [InvoiceEnums.CASH_SALE, InvoiceEnums.CREDIT_SALE, InvoiceEnums.SUBSCRIPTION];
-        const { accountId } = invoice;
-        if (!accountId) throw new Error('Account Id is missing');
+        // const invoiceTypesToUpdate = [InvoiceEnums.CASH_SALE, InvoiceEnums.CREDIT_SALE, InvoiceEnums.SUBSCRIPTION];
         // if (!invoiceTypesToUpdate.includes(invoice.invoiceType)) return;
 
         const account: AccountInterface | null = await this.getMembershipAccount(organizationId);
@@ -305,7 +303,7 @@ export class InvoiceManagerService {
         //     amount = amount * -1;
         // }
         const newBalance = account.amount + amount;
-        const update = await this.databaseService.updateItem({ id: accountId, organizationId, itemDto: { amount: newBalance }, collection: DatabaseCollectionEnums.ACCOUNTING });
+        const update = await this.databaseService.updateItem({ id: DefaultAccountEnums.MEMBERSHIP_FEES, organizationId, itemDto: { amount: newBalance }, collection: DatabaseCollectionEnums.ACCOUNTING });
         // Save to Ledger
         const ledger = await this.saveToLedger({ organizationId, invoice, amountPaid: amount });
 
@@ -422,5 +420,40 @@ export class InvoiceManagerService {
         const invoices = await this.databaseService.getAllItems({ organizationId, query, collection: DatabaseCollectionEnums.INVOICES });
 
         return invoices;
+    }
+
+    async payForMultipleInvoices(request: DBRequestInterface) {
+        const { organizationId, payload } = request;
+        const { amount, invoiceIds } = payload;
+
+
+        const allInvoices = await this.databaseService.getAllItems({ organizationId, collection: DatabaseCollectionEnums.INVOICES });
+        const invoices = allInvoices.filter(i => invoiceIds.includes(i.id));
+        if (!invoices.length) return [];
+        let current = amount;
+        let totalDeducted = 0; // Track the total deducted amount
+        const promises: any[] = [];
+
+        invoices.reverse().forEach(i => {
+            if (!current) return;
+            const pendingAmount = i.totalAmount - i.amountPaid;
+            let amountPaid = pendingAmount;
+
+            if (current >= pendingAmount) {
+                current -= pendingAmount;
+            } else {
+                amountPaid = current;
+                current = 0;
+            }
+
+            totalDeducted += amountPaid; // Accumulate the deducted amount
+            promises.push(this.payForInvoice({ organizationId, payload: { amountPaid, id: i.id } }));
+        });
+
+        const resolved = await resolveMultiplePromises(promises);
+
+        // Notify the member about the deducted amount
+        return resolved;
+
     }
 }
