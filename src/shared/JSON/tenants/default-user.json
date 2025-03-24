@@ -5,7 +5,7 @@
     "phone": "0702173432",
     "idNumber": "0000000000",
     "photoURL": "",
-    "verified": "false",
+    "verified": false,
     "permissions": "[]",
     "organizations": "[]",
     "admin": "true"
