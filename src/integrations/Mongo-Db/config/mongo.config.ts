@@ -9,14 +9,34 @@ dotenv.config();
 //     dbName: process.env.MONGO_DATABASE,
 // }
 
+// export const MongoConfig = {
+//     user: "doadmin", // Replace with your desired username
+//     pwd: "1E04x259z6GdV7cY", // Replace with a strong password
+//     roles: [{ role: "root", db: "admin" }], // Full
+//     dbName: 'membership',
+// }
+
+
+
+// export const MongoConfig = {
+//     user: "doadmin", // Admin user
+//     pwd: "1E04x259z6GdV7cY", // Strong password
+//     authSource: "admin", // Authenticate against the admin database
+//     // auth: {
+//     // },
+//     dbName: "membership", // Target database
+//     roles: [{ role: "root", db: "admin" }], // Full access
+// };
+
 export const MongoConfig = {
-    user: "doadmin", // Replace with your desired username
-    pwd: "1E04x259z6GdV7cY", // Replace with a strong password
-    roles: [{ role: "root", db: "membership" }], // Full
-    dbName: 'membership',
-}
-
-
+    user: "doadmin", // Admin user
+    pwd: "A9bX7y24LmPqT3VZ", // Strong password
+    authSource: "admin", // Authenticate against the admin database
+    // auth: {
+    // },
+    dbName: "membership", // Target database
+    roles: [{ role: "root", db: "admin" }], // Full access
+};
 
 
 
