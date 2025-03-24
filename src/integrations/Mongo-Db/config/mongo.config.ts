@@ -10,10 +10,10 @@ dotenv.config();
 // }
 
 export const MongoConfig = {
-    user: "doadmin!lkforEveryton3", // Replace with your desired username
+    user: "doadmin", // Replace with your desired username
     pwd: "1E04x259z6GdV7cY", // Replace with a strong password
     roles: [{ role: "root", db: "membership" }], // Full
-    dbName: 'admin',
+    dbName: 'membership',
 }
 
 
