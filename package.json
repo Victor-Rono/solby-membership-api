@@ -23,7 +23,9 @@
     "mongo:start": "clear && sudo mongod --dbpath /usr/local/var/mongodb",
     "mongo:stop": "brew services stop mongodb-community@8.0",
     "dev --install": "clear && npm i && nest start --watch",
-    "deploy": "clear && npm run build && vercel --prod"
+    "deploy": "clear && npm run build && vercel --prod",
+    "pm2": "pm2 stop solby-members && pm2 delete solby-members && rm -r dist && npm run build && pm2 start dist/main.js --name solby-members",
+    "pm2:start": " rm -r dist && npm run build && pm2 start dist/main.js --name solby-members"
   },
   "dependencies": {
     "@nestjs/axios": "^4.0.0",

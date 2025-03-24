@@ -9,6 +9,7 @@ import { OrganizationInterface } from 'src/shared/interfaces/organization.interf
 import { invitationTemplate } from 'src/integrations/emails/templates/auth/invitation.template';
 import { EmailsService } from 'src/integrations/emails/services/emails/emails.service';
 import { EmailInterface } from 'src/integrations/emails/emails.interface';
+import { SMSEventsEnum, SMSInterface } from 'src/shared/interfaces/sms.interface';
 
 @Injectable()
 export class UsersAutomationService extends BaseService<any, any, any, any> {
@@ -32,7 +33,13 @@ export class UsersAutomationService extends BaseService<any, any, any, any> {
             attachments: [],
 
         }
+        const sms: SMSInterface = {
+            phone: user.phone,
+            message: `Hello ${user.name}, you have been invited to join ${organization.shortName}. Please Call ${organization.phoneNumber} for any assistance.`,
+            organizationId
+        }
         const send = this.emailService.sendEmail(email);
+        this.eventEmitter.emit(SMSEventsEnum.SEND_SMS, sms);
     }
 
 }

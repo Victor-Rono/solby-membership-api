@@ -15,6 +15,6 @@ export const DevFrontendURL = 'http://localhost:4200';
 export const ProdFrontendURL = 'https://members.solby.io';
 export const DevBackendURL = 'http://localhost:3032';
 // export const DevBackendURL = 'http://localhost:3000';
-export const ProdBackendURL = 'https://solby-membership-five.vercel.app';
+export const ProdBackendURL = 'https://solby-members.lancolatech.co.ke';
 
 export const AppTagline = "Solby Membership, your gateway to a world of opportunities.";
