@@ -1,9 +1,10 @@
 /* eslint-disable prettier/prettier */
+import { DefaultApplicationData, ProdFrontendURL } from "src/shared/data/application.data";
 import { OrganizationInterface } from "src/shared/interfaces/organization.interface";
 
 export function invitationTemplate(payload: { userName: string; organization: OrganizationInterface }) {
   const { userName, organization } = payload;
-
+  const app = DefaultApplicationData;
   const template = `
 <html>
   <body style="background-color: #f9fafb; font-family: Arial, sans-serif; margin: 0; padding: 20px;">
@@ -16,10 +17,10 @@ export function invitationTemplate(payload: { userName: string; organization: Or
         Hello ${userName},
       </p>
       <p style="color: #333; font-size: 14px; text-align: center; margin-bottom: 20px;">
-       You have been invited to join ${organization.shortName} on Maziwatele. Click  the button below to join the organization.
+       You have been invited to join ${organization.shortName}. Click  the button below to join the organization.
       </p>
       <div style="text-align: center; margin: 20px 0;">
-        <a href="https://erp.maziwatele.com" 
+        <a href="${ProdFrontendURL}" 
            style="display: inline-block; background-color: #613506; color: white; padding: 12px 24px; border-radius: 6px; text-decoration: none; font-weight: bold; font-size: 16px;">
           Reset Password
         </a>

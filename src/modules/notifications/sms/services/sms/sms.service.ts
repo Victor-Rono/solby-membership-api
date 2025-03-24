@@ -24,23 +24,24 @@ export class SmsService {
     }
 
     private async saveSMS(payload: SMSInterface) {
+        const id = generateUniqueId();
+        payload.id = id;
         const save = await this.databaseService.createItem({
-            id: generateUniqueId(),
+            id,
             itemDto: payload,
             collection: DatabaseCollectionEnums.SMS,
             organizationId: payload.organizationId,
         })
     }
 
-    @OnEvent(SMSEventsEnum.SED_TEST_SMS)
-    sendTestsSms() {
-        const message: SMSInterface = {
-            organizationId: 'AAAA',
-            phone: '0795349039',
-            message: 'Test SMs'
-        };
-        const send = this.sendSMS(message);
-        console.log({ send });
+    @OnEvent(SMSEventsEnum.SEND_SMS)
+    sendTestsSms(sms: SMSInterface) {
+        // const message: SMSInterface = {
+        //     organizationId: 'AAAA',
+        //     phone: '0795349039',
+        //     message: 'Test SMs'
+        // };
+        const send = this.sendSMS(sms);
 
     }
 

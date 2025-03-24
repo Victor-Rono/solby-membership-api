@@ -1,5 +1,6 @@
 /* eslint-disable prettier/prettier */
 import { FarmerInterface } from "src/shared/interfaces/farmer.interface";
+import { MemberInterface } from "src/shared/interfaces/members.interface";
 import { getTotalForField } from "victor-dev-toolbox";
 
 // function calculateTotalsFromCreditors(items: CreditorInterface[] | DebtorInterface[]) {
@@ -10,7 +11,7 @@ import { getTotalForField } from "victor-dev-toolbox";
 //   return { totalAmount, balance, amountPaid }
 // }
 
-export function farmerHeaderTemplate(items: FarmerInterface[]): string {
+export function farmerHeaderTemplate(items: MemberInterface[]): string {
   // const { totalAmount, balance, amountPaid } = calculateTotalsFromCreditors(items);
   const balance = getTotalForField(items, 'balance');
 

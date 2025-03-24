@@ -4,6 +4,7 @@ import { getDaysInMonth } from 'date-fns';
 import { DatabaseCollectionEnums, DBRequestInterface } from 'src/database/database.interface';
 import { DatabaseService } from 'src/database/database.service';
 import { InvoiceInterface } from 'src/modules/invoices/invoices.interface';
+import { MembersService } from 'src/modules/members/services/members/members.service';
 import { PieChartInterface } from 'src/shared/interfaces/apex.interface';
 import { MemberInterface, MembersDashboardInterface, MemberStatusEnum } from 'src/shared/interfaces/members.interface';
 import { filterByDateRange, getFirstDayOfTheMonthUntilToday, getItemsCreatedToday, getItemsWithinDateRange, getTotalForField, jumpToXNumberOfDays } from 'victor-dev-toolbox';
@@ -12,11 +13,12 @@ import { filterByDateRange, getFirstDayOfTheMonthUntilToday, getItemsCreatedToda
 export class MembershipDashboardService {
     constructor(
         private databaseService: DatabaseService,
+        private membersService: MembersService,
     ) { }
 
     async getDashboard(payload: DBRequestInterface): Promise<MembersDashboardInterface> {
         const { organizationId } = payload;
-        const members: MemberInterface[] = await this.databaseService.getAllItems({ organizationId, collection: DatabaseCollectionEnums.MEMBERS });
+        const members: MemberInterface[] = await this.membersService.getAll(organizationId);
         const activeMembers = members.filter(m => m.status === MemberStatusEnum.ACTIVE);
         const inactiveMembers = members.filter(m => m.status === MemberStatusEnum.INACTIVE);
         const startDate = jumpToXNumberOfDays({ daysToJump: -365 });

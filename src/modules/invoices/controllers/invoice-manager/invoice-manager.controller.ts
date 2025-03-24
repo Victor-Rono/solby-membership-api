@@ -105,6 +105,14 @@ export class InvoiceManagerController {
         const invoice = await this.invoiceManagerService.getAllInvoices(payload);
         return invoice;
     }
+    @Post('pay-for-multiple')
+    async payForMultipleInvoices(@Body() body: any, @Headers() headers: any) {
+        const payload = prepareRequest({ payload: body, headers });
+        const invoice = await this.invoiceManagerService.payForMultipleInvoices(payload);
+        return invoice;
+    }
+
+    // payForMultipleInvoices
 }
 
 

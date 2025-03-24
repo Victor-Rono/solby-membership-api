@@ -2,7 +2,7 @@
 import { Injectable, Global, BadRequestException } from "@nestjs/common";
 import { RtdbService } from "src/integrations/firebase/services/rtdb/rtdb.service";
 import { checkIfExistsInterface, DatabaseCollectionEnums, DBRequestInterface, FieldValueInterface, GetAllItemsInterface, GetByIdInterface, MultipleFieldQueryInterface, MultipleFieldRequestInterface, QueryCollectionInterface, UpdateDBInterface } from "./database.interface";
-import { getCollectionWithorganizationId } from "./database.functions";
+import { generateUniqueId, getCollectionWithorganizationId } from "./database.functions";
 import { DATABASE_INTERFACE } from "./DATABASE_INTERFACE";
 import { getBeginningOfDayFromDate, getFullDateRange } from "src/shared/functions/date-time.functions";
 import { MongoDbService } from "src/integrations/Mongo-Db/services/mongo-db/mongo-db.service";
@@ -112,6 +112,10 @@ export class DatabaseService implements DATABASE_INTERFACE {
         }
     ): Promise<any> {
         const { id, itemDto, collection, organizationId, prefix } = payload;
+        const itemId = id || generateUniqueId();
+        if (id) {
+            itemDto.id = itemId;
+        }
         if (!collection) throw new BadRequestException('Collection is required');
         const serialNumber = await this.getNextSerialNumber(organizationId, collection);
         const now = new Date().toISOString();
@@ -199,7 +203,7 @@ export class DatabaseService implements DATABASE_INTERFACE {
         const nextSerial = serialNumber + 1;
         const randomPart = generateRandomString(4).toUpperCase();
         const year = new Date().getFullYear();
-        const fullSerial = `SB-${serialNumber.toString().padStart(3, '0')}-${randomPart}-${year}`
+        const fullSerial = `EJK-${serialNumber.toString().padStart(3, '0')}-${randomPart}-${year}`
         if (!serial) {
             this.DBservice.createItem({ id: collection, organizationId, itemDto: { number: nextSerial }, collection: serialNumbersCollection })
         } else {

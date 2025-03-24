@@ -78,7 +78,8 @@ export function getCollectionWithorganizationId(
         DatabaseCollectionEnums.DELETED_ORGANIZATIONS,
         DatabaseCollectionEnums.DELETED_USERS,
         DatabaseCollectionEnums.CREDENTIALS,
-        DatabaseCollectionEnums.PASSWORD_RESETS
+        DatabaseCollectionEnums.PASSWORD_RESETS,
+        DatabaseCollectionEnums.MEMBER_USER,
     ];
     if (organizationId && !collectionsToAvoid.includes(collection)) {
         return `${organizationId}/${collection}`;

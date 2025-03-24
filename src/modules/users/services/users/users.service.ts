@@ -32,7 +32,7 @@ export class UsersService extends BaseService<any, any, any, any> {
 
         users.forEach((user: UserInterface) => {
             const organizations = user.organizations || [];
-            if (organizations.includes(organizationId)) {
+            if (organizations.includes(organizationId) && user.admin) {
                 orgUsers.push(user);
             }
         });
@@ -44,6 +44,12 @@ export class UsersService extends BaseService<any, any, any, any> {
     async registerUser(payload: { id?: string, user: UserInterface, organizationId: string, permissions: PermissionEnums[] }) {
 
         const { user, organizationId, permissions } = payload;
+
+        const verify = await this.verifyUser(user);
+
+        if (!verify) {
+            throw new Error("User Unverified");
+        }
 
         let result: any = false;
 
@@ -91,6 +97,10 @@ export class UsersService extends BaseService<any, any, any, any> {
         }
 
         return result;
+    }
+
+    private async verifyUser(user: UserInterface): Promise<boolean> {
+        return true;
     }
 
     async updateUser(payload: { id: string, user: Partial<UserInterface>, organizationId: string, permissions: PermissionEnums[] }) {

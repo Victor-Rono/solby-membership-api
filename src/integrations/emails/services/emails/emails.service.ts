@@ -3,9 +3,12 @@ import { Injectable } from '@nestjs/common';
 import * as nodemailer from 'nodemailer';
 import { DefaultEmailConfig } from '../../config/email.config';
 import { EmailInterface } from '../../emails.interface';
+import { BaseAutomationService } from 'src/modules/base/base-automation/base-automation.service';
+import { DatabaseCollectionEnums } from 'src/database/database.interface';
+import { generateUniqueId } from 'src/database/database.functions';
 
 @Injectable()
-export class EmailsService {
+export class EmailsService extends BaseAutomationService {
 
     emailTransport() {
         const transporter = nodemailer.createTransport(
@@ -38,6 +41,11 @@ export class EmailsService {
         }
 
     }
+
+    // async saveEmail(email: EmailInterface) {
+    //     delete email.attachments;
+    //     return this.databaseService.createItem({ id: generateUniqueId(), itemDto: email, collection: DatabaseCollectionEnums.EMAILS, organizationId: "EMAILS" });
+    // }
 
 
 

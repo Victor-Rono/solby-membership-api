@@ -112,7 +112,8 @@ export function getBeginningOfEachDayFromArrayOfDates(dates: string[]) {
     return beginningOfEachDay.sort();
 }
 
-export function getBeginningOfDayFromDate(date: string) {
+export function getBeginningOfDayFromDate(siku?: string) {
+    const date = siku || new Date().toISOString();
     const beginningOfDay = new Date(date).setUTCHours(0, 0, 0, 0);
     const endOfDay = new Date(date).setUTCHours(23, 59, 59, 999);
     const timeNow = new Date(date).getTime();
@@ -129,16 +130,26 @@ export function getEndOfDayFromDate(date: string) {
 
 
 
-export function convertToISOString(dateString) {
-    // Split the date string into day, month, and year
-    const [month, day, year] = dateString.split('/').map(Number);
+export function convertToDDMMYYYY(current?: string): string {
+    let date: Date;
 
-    // Create a new date object with the parts in correct order (year, month-1, day)
-    const date = new Date(year, month - 1, day);
+    if (current) {
+        // Assume input is in MM/DD/YYYY format and parse it correctly
+        const [month, day, year] = current.split('/').map(Number);
+        date = new Date(year, month - 1, day);
+    } else {
+        // Use the current date
+        date = new Date();
+    }
 
-    // Return the ISO string representation
-    return date.toISOString();
+    // Format the date as DD/MM/YYYY
+    const day = String(date.getDate()).padStart(2, '0');
+    const month = String(date.getMonth() + 1).padStart(2, '0'); // Months are 0-based
+    const year = date.getFullYear();
+
+    return `${day}/${month}/${year}`;
 }
+
 
 
 

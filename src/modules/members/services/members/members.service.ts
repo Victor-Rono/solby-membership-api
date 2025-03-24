@@ -1,57 +1,66 @@
 /* eslint-disable prettier/prettier */
 import { Injectable } from '@nestjs/common';
-import { cloneDeep } from 'lodash';
-import { DatabaseCollectionEnums, DBRequestInterface, CreateRequestInterface, checkIfExistsInterface, MultipleFieldRequestInterface, FieldValueRequestInterface } from 'src/database/database.interface';
+import { DatabaseCollectionEnums, DBRequestInterface, CreateRequestInterface, MultipleFieldRequestInterface, FieldValueRequestInterface } from 'src/database/database.interface';
 import { EmailInterface } from 'src/integrations/emails/emails.interface';
 import { EmailsService } from 'src/integrations/emails/services/emails/emails.service';
 import { PdfService } from 'src/integrations/file-manager/services/pdf/pdf.service';
 import { BaseService } from 'src/modules/base/base.service';
 import { farmerDocumentTemplate } from 'src/modules/farmers/templates/creditor-debtor/farmer.template';
-import { InvoiceInterface, InvoiceUserTypeEnum, InvoiceCategoryEnum, InvoiceEnums } from 'src/modules/invoices/invoices.interface';
+import { InvoiceCategoryEnum, InvoiceEnums, InvoiceInterface, InvoiceUserTypeEnum } from 'src/modules/invoices/invoices.interface';
 import { invoicesTemplate } from 'src/modules/invoices/templates/invoices.template';
-import { PurchaseEventEnums } from 'src/modules/mt-purchases/services/purchases-automation/putchase-events.enum';
-import { getBeginningOfDayFromDate, getEndOfDayFromDate, getFullDateRange } from 'src/shared/functions/date-time.functions';
-import { getDescriptionForInvoice, totalForAllInvoices } from 'src/shared/functions/invoices.functions';
+import { getBeginningOfDayFromDate, getFullDateRange } from 'src/shared/functions/date-time.functions';
+import { totalForAllInvoices, totalForSingleInvoice } from 'src/shared/functions/invoices.functions';
 import { createNotification } from 'src/shared/functions/notifications.functions';
-import { MemberInterface, MembersDashboardInterface, MemberStatusEnum } from 'src/shared/interfaces/members.interface';
-import { MT_SaleInterface, MT_SaleRecordInterface } from 'src/shared/interfaces/MT-sales.interface';
+import { MemberAccountInterface, MemberInterface, MembersDashboardInterface, MembershipDashboardInterface, MemberStatusEnum } from 'src/shared/interfaces/members.interface';
 import { OrganizationInterface } from 'src/shared/interfaces/organization.interface';
 import { UserRegistrationInterface, UserInterface } from 'src/shared/interfaces/user.interface';
 import { getTotalForField, sortArrayByKey, resolveMultiplePromises, generateUniqueId, FieldValueInterface, getItemsWithinDateRange, dayMonthYear } from 'victor-dev-toolbox';
 import { MemberEventsEnum } from '../members-automation/members-events.enum';
-import { SMSEventsEnum } from 'src/shared/interfaces/sms.interface';
+import { SMSEventsEnum, SMSInterface } from 'src/shared/interfaces/sms.interface';
+import { TenantInterface } from 'src/modules/tenants/interfaces/tenants.interface';
+import { DefaultAccountEnums } from 'src/modules/accounting/accounting.interface';
+import { InvoiceManagerService } from 'src/modules/invoices/services/invoice-manager/invoice-manager.service';
+import { UsersService } from 'src/modules/users/services/users/users.service';
+import { convertMemberToUser } from 'src/shared/functions/members.functions';
 
 const collection = DatabaseCollectionEnums.INVOICES;
 
 
 @Injectable()
 export class MembersService extends BaseService<any, any, any, any> {
-    collection: DatabaseCollectionEnums = DatabaseCollectionEnums.MEMBERS;
 
     constructor(
         private emailService: EmailsService,
         private pdfService: PdfService,
+        private invoiceManagerService: InvoiceManagerService,
+        private usersService: UsersService,
+
+
     ) {
         super();
     }
 
     override async getAll(organizationId:
         string): Promise<any[]> {
-        return this.getCreditorsAndInvoices(organizationId);
+        // return this.getCreditorsAndInvoices(organizationId);
+        const members = await super.getAll(organizationId);
+        return this.getMemberPayments({ organizationId, members });
     }
 
     override async getById(request: DBRequestInterface): Promise<any> {
+        const { organizationId, id } = request;
         const Member: MemberInterface = await super.getById(request);
         if (!Member) return null;
-        const invoices = await this.getAllPendingInvoices(request);
-        const totalAmount = getTotalForField(invoices, 'totalAmount');
-        const amountPaid = getTotalForField(invoices, 'amountPaid');
-        const balance = totalAmount - amountPaid;
-        Member.balance = balance;
-        return Member;
+        const members = await this.getMemberPayments({ organizationId, members: [Member] });
+        return members[0] || null;
     }
 
+
+
+
+
     override async getByField(request: FieldValueRequestInterface): Promise<any[]> {
+
         const members: MemberInterface[] = await super.getByField(request);
 
         const query = {
@@ -61,20 +70,7 @@ export class MembersService extends BaseService<any, any, any, any> {
                 ]
             }
         };
-        const invoices = await this.databaseService.getAllItems({ organizationId: request.organizationId, collection: DatabaseCollectionEnums.INVOICES, query })
-
-        const finalMembers: MemberInterface[] = [];
-        members.forEach(m => {
-            const filtered = invoices.filter(i => i.buyerId === m.id);
-            const total = totalForAllInvoices(filtered);
-            m.balance = total.totalDue;
-            finalMembers.push(m);
-        });
-        // return finalMembers;
-        return sortArrayByKey('createdAt', 'ASC', finalMembers);
-
-
-
+        return this.getMemberPayments({ organizationId: request.organizationId, members });
     }
 
 
@@ -107,116 +103,107 @@ export class MembersService extends BaseService<any, any, any, any> {
         };
         const promises: any[] = [
             super.getAll(organizationId),
-            this.databaseService.getAllItems({ collection: DatabaseCollectionEnums.INVOICES, query, organizationId })
+            this.databaseService.getAllItems({ collection: DatabaseCollectionEnums.INVOICES, query, organizationId }),
+            this.databaseService.getAllItems({ collection: DatabaseCollectionEnums.MEMBER_ACCOUNTS, organizationId }),
         ];
         const resolved = await resolveMultiplePromises(promises);
 
-        const allCreditors = resolved[0];
+        const allCreditors: MemberInterface[] = resolved[0];
         const invoices: InvoiceInterface[] = resolved[1];
+        const accounts: MemberAccountInterface[] = resolved[2];
+
         allCreditors.forEach(c => {
             const filteredInvoices = invoices.filter(i => i.buyerId === c.id);
+
             const totalAmount = getTotalForField(filteredInvoices, 'totalAmount');
             const totalPaid = Math.abs(getTotalForField(filteredInvoices, 'amountPaid'));
             const balance = totalAmount - totalPaid;
-            c.balance = balance;
+
+            const account = accounts.find(a => a.id === c.id);
+
+            c.savings = account?.amount || 0;
+            c.outstandingBalance = balance;
             Members.push(c);
         })
         return sortArrayByKey('balance', 'DESC', Members);
     }
 
     // Add Creditor
-    async create(data: CreateRequestInterface) {
-
+    override async create(data: CreateRequestInterface) {
         const { payload, organizationId } = data;
-        return new Promise<any>(async (resolve, reject) => {
-            const CreditorsWithSimilarName = await this.getByField(
-                // { field: 'userId', value: Creditor.userId, organizationId, },
-                {
-                    payload: {
-                        field: 'phone',
-                        value: payload.phone,
-                    },
+        const outstandingBalance = payload.outstandingBalance || 0;
+        const savings = payload.savings || 0;
+        delete payload.overpayment;
+        delete payload.outstandingBalance;
+        const user: UserInterface = convertMemberToUser({ organizationId, member: payload });
+        const member = await this.usersService.registerUser({ id: user.id, organizationId, user, permissions: [] });
 
-                    organizationId,
-                }
+        if (outstandingBalance) {
+            this.saveOutstandingBalance({ organizationId, member, amount: outstandingBalance });
+        }
 
-            );
-            if (CreditorsWithSimilarName.length) {
-                const notification = createNotification(
-                    'error',
-                    `The User is already a Member`,
-                );
-                resolve({ notification });
-                return;
-            }
-            const id = payload.id || generateUniqueId();
-            // payload.status = MemberStatusEnum.INACTIVE;
-            payload.status = MemberStatusEnum.ACTIVE;
-            super.create({ id, payload, organizationId })
-                .then((res) => {
-                    this.eventEmitter.emit(MemberEventsEnum.MEMBER_CREATED, { member: res, organizationId })
-                    const notification = createNotification(
-                        'success',
-                        'Member Added Successfully',
-                    );
-                    res.notification = notification;
-                    resolve(res);
-                })
-                .catch((err) => {
-                    reject(err);
-                });
-        });
+        if (savings) {
+            this.saveOverpayment({ member, organizationId, amount: savings });
+        }
+        const notification = createNotification('success', 'Member created successfully');
+        member.notification = notification;
+        this.eventEmitter.emit(MemberEventsEnum.MEMBER_CREATED, { member, organizationId })
     }
 
 
+    // override async create(data: CreateRequestInterface) {
+
+    //     const { payload, organizationId } = data;
+    //     return new Promise<any>(async (resolve, reject) => {
+    //         const existingMembers: MemberInterface[] = await this.databaseService.getAllItems({ collection: DatabaseCollectionEnums.MEMBERS, organizationId });
 
 
-    async addCreditor(data: DBRequestInterface) {
-        const { id, payload, organizationId } = data;
-        const user = payload as UserRegistrationInterface;
-        const request: checkIfExistsInterface = {
-            fields: [
-                {
-                    field: 'email',
-                    value: user.email,
-                },
-                {
-                    field: 'phone',
-                    value: user.phone,
-                },
 
-            ],
-            organizationId,
-            collection: DatabaseCollectionEnums.USERS,
-        }
+    //         const CreditorsWithSimilarName = await this.getByField(
+    //             // { field: 'userId', value: Creditor.userId, organizationId, },
+    //             {
+    //                 payload: {
+    //                     field: 'phone',
+    //                     value: payload.phone,
+    //                 },
 
-        const fields = [
-            {
-                field: 'email',
-                value: user.email,
-            },
-            {
-                field: 'phone',
-                value: user.phone,
-            },
-        ]
-        const userInDB = await this.getUserByFields(organizationId, fields);
+    //                 organizationId,
+    //             }
 
+    //         );
+    //         if (CreditorsWithSimilarName.length) {
+    //             const notification = createNotification(
+    //                 'error',
+    //                 `The User is already a Member`,
+    //             );
+    //             resolve({ notification });
+    //             return;
+    //         }
+    //         const id = payload.id || generateUniqueId();
+    //         // payload.status = MemberStatusEnum.INACTIVE;
+    //         payload.status =x
 
-        // const userExists = await this.databaseService.checkIfExists(request);
-        request.collection = DatabaseCollectionEnums.MEMBERS;
-        const creditorExists = await this.databaseService.checkIfExists(request);
-        if (creditorExists) {
-            return {
-                message: 'Member EXISTS',
-            }
-        }
+    //         const outstandingBalance = payload.outstandingBalance || 0;
+    //         const overpayment = payload.overpayment || 0;
+    //         delete payload.overpayment;
+    //         delete payload.outstandingBalance;
 
-        // Save as a Creditor
-        const saveCreditor = await this.saveCreditor(user, organizationId, userInDB);
-        return saveCreditor;
+    //         const member = await super.create({ id, payload, organizationId });
+    //         if (outstandingBalance) {
+    //             this.saveOutstandingBalance({ organizationId, member, amount: outstandingBalance });
+    //         }
 
-    }
+    //         if (overpayment) {
+    //             this.saveOverpayment({ member, organizationId, amount: overpayment });
+    //         }
+    //         const notification = createNotification('success', 'Member created successfully');
+    //         member.notification = notification;
+    //         this.eventEmitter.emit(MemberEventsEnum.MEMBER_CREATED, { member, organizationId })
+
+    //         resolve(member);
+
+    //     });
+    // }
 
     async getUserByFields(organizationId: string, fields: FieldValueInterface[]): Promise<UserInterface | null> {
         const query: MultipleFieldRequestInterface = {
@@ -231,36 +218,6 @@ export class MembersService extends BaseService<any, any, any, any> {
         return user[0] || null;
     }
 
-    private async saveCreditor(user: UserRegistrationInterface, organizationId: string, userInDB: UserInterface | null) {
-
-        let userId = generateUniqueId();
-        if (!userInDB) {
-            const dbUser: UserInterface = await this.saveUser(user, organizationId);
-            userId = dbUser.id;
-        } else {
-            userId = userInDB.id;
-        }
-        const { phone, email, idNumber, name } = user;
-        const itemDto: MemberInterface = {
-            id: userId,
-            userId,
-            name,
-            email,
-            phone,
-            idNumber,
-            balance: 0,
-            // paymentInterval: PaymentIntervalEnum.MONTHLY,
-            currency: 'KES',
-            deductions: [],
-            allowances: [],
-            createdBy: 'SYSTEM',
-            createdAt: new Date().toISOString(),
-            accountNumber: 0,
-            status: MemberStatusEnum.INACTIVE,
-        }
-        const save = await this.databaseService.createItem({ id: itemDto.id, itemDto, organizationId, collection: DatabaseCollectionEnums.MEMBERS });
-        return save;
-    }
 
     async saveUser(user: UserRegistrationInterface, organizationId: string): Promise<UserInterface> {
         const { phone, email, idNumber, name } = user;
@@ -284,82 +241,11 @@ export class MembersService extends BaseService<any, any, any, any> {
     }
 
 
-    private getAllCreditorDetails(Creditor: MemberInterface | null, organizationId: string) {
-        return new Promise<MemberInterface | null>((resolve, reject) => {
-            if (!Creditor.userId) {
-                resolve(Creditor);
-                return;
-            }
-            this.databaseService.getItem({ id: Creditor.userId, collection: DatabaseCollectionEnums.USERS, organizationId }).then(res => {
-                if (!res) {
-                    resolve(Creditor);
-                    return;
-                }
-                const clonedCreditor: MemberInterface = cloneDeep(Creditor);
-                clonedCreditor.email = res.email;
-                clonedCreditor.name = res.name;
-                clonedCreditor.phone = res.phone;
-
-                resolve(clonedCreditor);
-            })
-
-        })
-
-    }
-
-    // private getDetailsForMultipleCreditors(Creditors: MemberInterface[], organizationId: string) {
-    //     return new Promise<MemberInterface[]>((resolve, reject) => {
-    //         const modifiedCreditors: MemberInterface[] = [];
-    //         this.databaseService.getAllItems({ collection: DatabaseCollectionEnums.USERS, organizationId }).then((users: UserInterface[]) => {
-    //             Creditors.forEach(e => {
-    //                 const user = users.find(u => u.id === e.userId);
-    //                 if (!user) {
-    //                     modifiedCreditors.push(e);
-    //                 } else {
-    //                     const clonedCreditor = cloneDeep(e);
-    //                     clonedCreditor.email = user.email;
-    //                     clonedCreditor.name = user.name;
-    //                     clonedCreditor.phone = user.phone.toString();
-    //                     modifiedCreditors.push(clonedCreditor);
-    //                 }
-    //                 resolve(modifiedCreditors);
-    //             })
-    //         });
-
-    //     })
-    // }
-
     async getUserDetails(organizationId: string, payload: { email: string }) {
         const collection = DatabaseCollectionEnums.USERS;
         const users = await this.databaseService.getItemsByField({ field: 'email', value: payload.email, collection, organizationId });
         const user = users[0] || null;
         return user;
-    }
-
-    async addCreditorByPhone(data: CreateRequestInterface) {
-        const { organizationId, payload, id } = data;
-        const { phone } = payload;
-        const users: UserInterface[] = await this.databaseService.getItemsByField({ field: 'phone', value: phone, collection: DatabaseCollectionEnums.USERS, organizationId });
-        const user = users[0];
-        if (!user) {
-            return false;
-        }
-
-        const creditor: MemberInterface = {
-            id,
-            userId: user.id,
-            name: user.name,
-            phone: user.phone,
-            email: user.email,
-            idNumber: user.idNumber,
-            createdBy: 'SYSTEM',
-            balance: 0,
-            // paymentInterval: PaymentIntervalEnum.MONTHLY,
-            currency: 'KES',
-            createdAt: new Date().toISOString(),
-            accountNumber: 0,
-            status: MemberStatusEnum.ACTIVE
-        };
     }
 
     private async getCreditorsReportHtml(organizationId: string) {
@@ -413,15 +299,35 @@ export class MembersService extends BaseService<any, any, any, any> {
         const { organizationId, payload, id } = request;
         const { startDate, stopDate, field } = payload;
 
-        const query = {
-            // where field = field, value = id
-            // where date >= startdate <= stopDate
-        }
+
 
         const invoices = await this.databaseService.getItemsByField({ organizationId, field, value: id, collection });
         const filtered = await getItemsWithinDateRange({ dateRange: { startDate, stopDate }, items: invoices, fieldToCheck: 'createdAt' });
 
         return sortArrayByKey('createdAt', 'DESC', filtered);
+    }
+
+    async getAllPendingSingleMemberInvoices(request: DBRequestInterface): Promise<InvoiceInterface[]> {
+        const { organizationId, id, payload } = request;
+        // const { startDate, stopDate, field } = payload;
+        const invoiceIds: string[] = payload?.invoiceIds || [];
+
+        const query = {
+            $expr: {
+                $and: [
+                    { $gt: ["$totalAmount", "$amountPaid"] },
+                    { $eq: ["$buyerId", id] },
+                    // { $eq: ["$buyerId", id] }
+                ]
+            }
+        };
+
+        let invoices = await this.databaseService.getAllItems({ organizationId, query, collection });
+        if (invoiceIds?.length > 0) {
+            invoices = invoices.filter((invoice: InvoiceInterface) => invoiceIds.includes(invoice.id));
+        }
+        return invoices;
+
     }
 
     private async getSingleMemberInvoiceHTML(request: DBRequestInterface): Promise<string> {
@@ -430,14 +336,13 @@ export class MembersService extends BaseService<any, any, any, any> {
 
 
         const { startDate, stopDate } = payload;
-        const collection = DatabaseCollectionEnums.MEMBERS;
         // if (field === 'buyerId') {
         //     collection = DatabaseCollectionEnums.DEBTORS;
         //     invoiceType = 'Debtor';
         // }
         const resolved = await resolveMultiplePromises([
             this.getSingleMemberInvoicesByDateRange(request),
-            this.databaseService.getItemsByField({ organizationId, field: 'id', value: id, collection }),
+            this.getByField({ organizationId, payload: { field: 'id', value: id, } }),
             this.databaseService.getItem({ organizationId, id: organizationId, collection: DatabaseCollectionEnums.ORGANIZATIONS }),
         ]);
 
@@ -500,76 +405,11 @@ export class MembersService extends BaseService<any, any, any, any> {
 
     }
 
-    // async purchase(data: DBRequestInterface) {
-    //     const { organizationId, payload } = data;
-    //     const { sale, products } = payload;
-    //     const item = sale as MT_SaleInterface;
-    //     item.items = products;
-    //     item.category = InvoiceCategoryEnum.PURCHASE
-    //     item.invoiceType = InvoiceEnums.PURCHASE,
-    //         item.buyerId = organizationId;
-    //     // item.sellerId
-    //     // const seller: MemberInterface = await this.databaseService.getItem({ id: item.sellerId || 'none', organizationId, collection: DatabaseCollectionEnums.MEMBERS });
-    //     const seller: MemberInterface = await this.getById({ id: item.sellerId || 'none', organizationId });
-    //     if (seller) {
-    //         item.sellerId = seller.id;
-    //         item.sellerName = seller.name;
-    //         item.email = seller.email;
-    //         item.sellerPhone = seller.phone;
-    //     }
-
-
-
-    //     const id = item.id || generateUniqueId();
-    //     item.id = id;
-
-    //     const invoice = await this.addMemberDetails(organizationId, item);
-    //     const description = getDescriptionForInvoice(invoice);
-    //     invoice.description = description;
-    //     invoice.userType = InvoiceUserTypeEnum.MEMBER;
-
-    //     const saveSale = await this.databaseService.createItem({ id, organizationId, itemDto: invoice, collection });
-
-    //     const record: MT_SaleRecordInterface = {
-
-    //         saleId: saveSale.id,
-    //         id: generateUniqueId(),
-    //         items: products,
-    //         createdBy: "SYSTEM"
-    //     };
-
-    //     this.eventEmitter.emit(PurchaseEventEnums.PURCHASE_MADE, { record, organizationId, sale: saveSale });
-    //     return saveSale;
-
-    // }
-
-    // private async addMemberDetails(organizationId: string, invoice: InvoiceInterface): Promise<InvoiceInterface> {
-    //     const Member: MemberInterface = await this.getById({ id: invoice.sellerId || 'none', organizationId });
-    //     if (Member) {
-    //         invoice.sellerId = Member.id;
-    //         invoice.sellerName = Member.name;
-    //         invoice.email = Member.email;
-    //         invoice.sellerPhone = Member.phone;
-    //     }
-    //     return invoice;
-    // }
-
-
     async getMemberPendingInvoices(request: DBRequestInterface) {
         const { organizationId, payload } = request;
         const fullRange = getFullDateRange(payload);
         const { startDate, stopDate } = fullRange;
 
-        // const query = {
-        //     $expr: {
-        //         $and: [
-        //             { $gt: ["$totalAmount", "$amountPaid"] },
-        //             { $gt: ["$amountPaid", "$totalAmount"] },
-        //             { $gte: ["$day", startDate] },
-        //             { $lte: ["$day", stopDate] },
-        //         ],
-        //     }
-        // };
 
         const query = {
 
@@ -588,10 +428,192 @@ export class MembersService extends BaseService<any, any, any, any> {
         return invoices;
     }
 
-    async emitEvent() {
-        this.eventEmitter.emit(SMSEventsEnum.SED_TEST_SMS);
-        return "EVENT";
+    // async emitEvent() {
+    //     this.eventEmitter.emit(SMSEventsEnum.SED_TEST_SMS);
+    //     return "EVENT";
+    // }
+
+
+    // Save Over payments
+    private async saveOverpayment(request: { organizationId: string, member: MemberInterface, amount: number }) {
+        const { organizationId, member, amount } = request;
+        const memberAccount = await this.getMemberAccount({ organizationId, id: member.id });
+
+        const newAmount = memberAccount.amount + amount;
+
+        return this.databaseService.updateItem({ id: member.id, itemDto: { amount: newAmount }, collection: DatabaseCollectionEnums.MEMBER_ACCOUNTS, organizationId })
+    }
+
+    // Save Outstanding balances
+    private async saveOutstandingBalance(request: { organizationId: string, member: MemberInterface, amount: number }) {
+        const { organizationId, member, amount } = request;
+        const id = generateUniqueId();
+        const organization: TenantInterface = await this.databaseService.getItem({ organizationId, id: organizationId, collection: DatabaseCollectionEnums.ORGANIZATIONS });
+        const invoice: InvoiceInterface = {
+            id,
+            name: member.name,
+            description: `Unpaid arrears before getting registered into the system`,
+            invoiceType: InvoiceEnums.SUBSCRIPTION,
+            items: [
+                {
+                    id: generateUniqueId(),
+                    name: `Unpaid arrears before getting registered into the system`,
+                    quantity: 1,
+                    unitPrice: amount,
+                    total: amount,
+                    day: getBeginningOfDayFromDate(),
+
+                    invoiceId: id,
+                }
+            ],
+            totalAmount: amount,
+            amountPaid: 0,
+            currency: "KES",
+            buyerId: member.id,
+            sellerId: organizationId,
+            accountId: DefaultAccountEnums.MEMBERSHIP_FEES,
+            day: getBeginningOfDayFromDate(),
+            category: InvoiceCategoryEnum.SALE,
+            buyerName: member.name,
+            sellerName: organization?.shortName || 'N/A',
+            userType: InvoiceUserTypeEnum.MEMBER,
+            buyerPhone: member.phone,
+            sellerPhone: organization.phone,
+            email: member.email,
+            createdBy: 'SYSTEM'
+        }
+
+        const save = await this.databaseService.createItem({ id, itemDto: invoice, collection: DatabaseCollectionEnums.INVOICES, organizationId });
+        return save;
+
+    }
+
+    private async getMemberAccount(request: { organizationId: string, id: string }): Promise<MemberAccountInterface> {
+        const collection = DatabaseCollectionEnums.MEMBER_ACCOUNTS;
+        const { organizationId, id } = request;
+        const account = await this.databaseService.getItem({ organizationId, id, collection });
+        if (account) return account;
+        const createAccount = await this.databaseService.createItem({ id, organizationId, itemDto: { id, amount: 0 }, collection });
+        return createAccount;
+    }
+
+    async resolveInvoicePayments(request: DBRequestInterface) {
+        const { id, organizationId, payload } = request;
+        const { amount, invoiceIds } = payload;
+        const account = await this.databaseService.getItem({ organizationId, id, collection: DatabaseCollectionEnums.MEMBER_ACCOUNTS });
+        const currentAmount = amount || account?.amount;
+        if (!currentAmount) return;
+
+        const invoices = await this.getAllPendingSingleMemberInvoices({ id, organizationId, payload: { invoiceIds } });
+        if (!invoices.length) return null;
+        const invoice = invoices[0];
+        let current = currentAmount;
+        let totalDeducted = 0; // Track the total deducted amount
+        const promises: any[] = [];
+
+        invoices.forEach(i => {
+            if (!current) return;
+            const pendingAmount = i.totalAmount - i.amountPaid;
+            let amountPaid = pendingAmount;
+
+            if (current >= pendingAmount) {
+                current -= pendingAmount;
+            } else {
+                amountPaid = current;
+                current = 0;
+            }
+
+            totalDeducted += amountPaid; // Accumulate the deducted amount
+            promises.push(this.invoiceManagerService.payForInvoice({ organizationId, payload: { amountPaid } }));
+        });
+
+        const resolved = await resolveMultiplePromises(promises);
+
+        // Notify the member about the deducted amount
+        const sms: SMSInterface = {
+            organizationId,
+            message: `Hello ${invoice.buyerName}, KES ${totalDeducted} has been deducted from your account to pay for membership subscriptions.`,
+            phone: invoice.buyerPhone,
+        }
+        this.eventEmitter.emit(SMSEventsEnum.SEND_SMS, sms);
+
+    }
+
+    private async getMemberPayments(payload: { organizationId: string, members: MemberInterface[] }): Promise<MemberInterface[]> {
+        const { organizationId, members } = payload;
+        const memberAccounts: MemberAccountInterface[] = [];
+        const allMembers: MemberInterface[] = [];
+        let invoices: InvoiceInterface[] = [];
+        if (!members.length) return allMembers;
+        if (members.length === 1) {
+
+            const member = members[0];
+            if (!member.member) return allMembers
+            invoices = await this.getAllPendingSingleMemberInvoices({ id: member.id, organizationId });
+            const memberAccount: MemberAccountInterface = await this.getMemberAccount({ organizationId, id: member.id });
+            const totals = totalForAllInvoices(invoices);
+            member.outstandingBalance = totals.totalDue;
+            member.savings = memberAccount.amount;
+            allMembers.push(member);
+        } else {
+            invoices = await this.getAllPendingInvoices({ organizationId });
+            const memberAccounts: MemberAccountInterface[] = await this.databaseService.getAllItems({ organizationId, collection: DatabaseCollectionEnums.MEMBER_ACCOUNTS });
+            members.forEach(m => {
+                if (!m.member) return;
+                const memberAccount = memberAccounts.find(ma => ma.id === m.id);
+                const memberInvoices = invoices.filter(i => i.buyerId === m.id);
+                const totals = totalForAllInvoices(memberInvoices);
+                m.outstandingBalance = totals.totalDue;
+                m.savings = memberAccount?.amount || 0;
+                allMembers.push(m);
+            })
+
+        }
+        // const invoices = await this.getAllPendingInvoices({ organizationId });
+        return allMembers;
+    }
+
+    // await this.notifyMember({ organizationId, id, amountDeducted: totalDeducted });
+    async getMembershipDashboardById(request: DBRequestInterface): Promise<MembershipDashboardInterface> {
+        const { organizationId, id } = request;
+
+        // Fetch data concurrently
+        const [member, pendingInvoices, account, groups] = await Promise.all([
+            this.getById({ organizationId, id }),
+            this.getAllPendingSingleMemberInvoices({ id, organizationId }),
+            this.getMemberAccount({ organizationId, id }),
+            this.databaseService.getAllItems({ organizationId, collection: DatabaseCollectionEnums.GROUPS })
+        ]);
+
+        // Process data after fetching
+        const invoiceTotals = totalForAllInvoices(pendingInvoices);
+        const adminGroups = groups.filter(g => member.adminGroups?.includes(g.id));
+        const group = groups.find(g => g.id === member.groupId);
+
+        return { member, pendingInvoices, invoiceTotals, group, adminGroups, account };
+    }
+
+
+    async getGroups(request: DBRequestInterface) {
+        const { organizationId, id } = request;
+
+        // Fetch member and groups concurrently
+        const [member, groups] = await Promise.all([
+            this.getById({ organizationId, id }),
+            this.databaseService.getAllItems({ organizationId, collection: DatabaseCollectionEnums.GROUPS })
+        ]);
+
+        // Process the groups data
+        const adminGroups = groups.filter(g => member.adminGroups.includes(g.id));
+        const group = groups.find(g => g.id === member.groupId);
+
+        return { adminGroups, group };
     }
 
 }
+
+
+
+
+
 

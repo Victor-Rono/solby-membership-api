@@ -10,18 +10,18 @@ export class MembersController extends BaseController<any, any, any, any> {
     }
 
 
-    @Post('add-creditor')
-    async addCreditor(@Body() payload: any, @Headers() headers: any,) {
-        const request = prepareRequest({ headers, payload });
-        const add = await this.service.addCreditor(request);
-        return add;
-    }
+    // @Post('add-creditor')
+    // async addCreditor(@Body() payload: any, @Headers() headers: any,) {
+    //     const request = prepareRequest({ headers, payload });
+    //     const add = await this.service.addCreditor(request);
+    //     return add;
+    // }
 
 
     @Get('invoices/pending/:id')
     async pendingInvoices(@Param('id') id, @Headers() headers: any,) {
         const payload = prepareRequest({ id, headers });
-        return this.service.getAllPendingInvoices(payload);
+        return this.service.getAllPendingSingleMemberInvoices(payload);
     }
     @Post('report/download')
     async downloadLedgerAsPDF(@Body() body: any, @Headers() headers: any, @Res() res: any) {
@@ -111,8 +111,21 @@ export class MembersController extends BaseController<any, any, any, any> {
         return invoice;
     }
 
+
+
     // @Get('emit/event')
     // emit() {
     //     return this.service.emitEvent();
     // }
+    @Get('dashboard/:id')
+    async membershipDashboard(@Param('id') id, @Headers() headers: any,) {
+        const payload = prepareRequest({ id, headers });
+        return this.service.getMembershipDashboardById(payload);
+    }
+
+    @Post('resolve-invoices/:id')
+    async resolveInvoices(@Body() body: any, @Headers() headers: any, @Param('id') id: string) {
+        const payload = prepareRequest({ payload: body, headers, id });
+        return this.service.resolveInvoicePayments(payload);
+    }
 }

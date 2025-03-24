@@ -1,5 +1,6 @@
 /* eslint-disable prettier/prettier */
 export interface SMSInterface {
+    id?: string,
     organizationId: string,
     phone: string;
     message: string;
@@ -7,5 +8,6 @@ export interface SMSInterface {
 }
 
 export enum SMSEventsEnum {
-    SED_TEST_SMS = 'Send Test Sms'
+    SEND_SMS = 'Send Sms',
+
 }
