@@ -137,6 +137,7 @@ export class AuthService extends BaseService<any, any, any, any> {
         const { email, password } = payload;
         const usersFromDb: UserInterface[] = await this.databaseService.getItemsByField({ field: 'email', value: email, collection: DatabaseCollectionEnums.USERS, organizationId });
         const user = usersFromDb[0] || null;
+        console.log({ user });
 
 
         if (!user) {
@@ -147,6 +148,7 @@ export class AuthService extends BaseService<any, any, any, any> {
 
         if (!user.verified) {
             const createCredentials = await this.createUserCredentials({ userId: user.id, password });
+            console.log({ createCredentials });
 
             return { token, user };
 
@@ -173,7 +175,7 @@ export class AuthService extends BaseService<any, any, any, any> {
         // }
         const usersFromDB: UserInterface[] = await this.databaseService.getItemsByField({ organizationId, field: 'email', value: email, collection: DatabaseCollectionEnums.USERS });
         const user = usersFromDB[0] || null;
-
+        console.log({ user });
         if (!user) {
             // throw new Error('User not found');
             return result;
@@ -239,11 +241,12 @@ export class AuthService extends BaseService<any, any, any, any> {
         const { userId, password } = data;
 
         const credential = await this.databaseService.getItem({ id: userId, collection: DatabaseCollectionEnums.CREDENTIALS, organizationId: '' });
-
         if (!credential) {
             return false;
         }
         const isPasswordValid = await compare(password, credential.password);
+        console.log(({ credential, isPasswordValid }));
+
         return isPasswordValid;
     }
 
