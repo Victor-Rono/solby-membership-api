@@ -1,7 +1,7 @@
 /* eslint-disable prettier/prettier */
 import { Injectable } from '@nestjs/common';
 import { OnEvent } from '@nestjs/event-emitter';
-import { BaseAutomationService } from 'src/modules/base/base-automation/base-automation.service';
+import { BaseAutomationService } from 'src/modules/base/services/base-automation/base-automation.service';
 import { PurchaseEventEnums } from './putchase-events.enum';
 import { Mt_ItemsInterface, MT_SaleInterface, MT_SaleRecordInterface } from 'src/shared/interfaces/MT-sales.interface';
 import { generateUniqueId, resolveMultiplePromises } from 'victor-dev-toolbox';

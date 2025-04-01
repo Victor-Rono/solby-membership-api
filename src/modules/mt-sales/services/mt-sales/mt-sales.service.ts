@@ -3,7 +3,7 @@ import { getFirstDayOfTheMonthUntilToday, getItemsWithinDateRange } from 'victor
 import { Injectable } from '@nestjs/common';
 import { generateUniqueId } from 'src/database/database.functions';
 import { DatabaseCollectionEnums, DBRequestInterface, QueryCollectionInterface } from 'src/database/database.interface';
-import { BaseService } from 'src/modules/base/base.service';
+import { BaseService } from 'src/modules/base/services/base/base.service';
 import { MT_SaleInterface, MT_SaleRecordInterface } from 'src/shared/interfaces/MT-sales.interface';
 import { SalesEventsEnum } from '../sales-automation/sales-events.enums';
 import { InvoiceCategoryEnum, InvoiceEnums, InvoiceInterface, InvoiceRevenueInterface, InvoiceUserTypeEnum } from 'src/modules/invoices/invoices.interface';

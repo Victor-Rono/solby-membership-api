@@ -1,6 +1,6 @@
 /* eslint-disable prettier/prettier */
 import { Controller } from '@nestjs/common';
-import { BaseController } from 'src/modules/base/base.controller';
+import { BaseController } from 'src/modules/base/controllers/base/base.controller';
 import { MtExpenseCategoriesService } from '../../services/mt-expense-categories/mt-expense-categories.service';
 
 @Controller('mt-expense-categories')

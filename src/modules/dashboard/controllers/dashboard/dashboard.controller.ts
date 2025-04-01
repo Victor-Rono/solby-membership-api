@@ -1,7 +1,7 @@
 /* eslint-disable prettier/prettier */
 import { Controller, Get, Headers, Param } from '@nestjs/common';
 import { DashboardService } from '../../services/dashboard/dashboard.service';
-import { prepareRequest } from '../../../base/base.controller';
+import { prepareRequest } from '../../../base/controllers/base/base.controller';
 import { MembershipDashboardService } from '../../services/membership-dashboard/membership-dashboard.service';
 
 @Controller('dashboard')

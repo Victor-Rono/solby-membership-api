@@ -1,7 +1,7 @@
 /* eslint-disable prettier/prettier */
 import { Injectable } from '@nestjs/common';
 import { OnEvent } from '@nestjs/event-emitter';
-import { BaseService } from 'src/modules/base/base.service';
+import { BaseService } from 'src/modules/base/services/base/base.service';
 import { UserEventsEnum } from './user-events.enum';
 import { DatabaseCollectionEnums } from 'src/database/database.interface';
 import { UserInterface } from 'src/shared/interfaces/user.interface';

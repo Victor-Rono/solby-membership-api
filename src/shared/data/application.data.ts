@@ -3,7 +3,7 @@ import { ApplicationDataInterface } from "../interfaces/application.interface";
 
 export const DefaultApplicationData: ApplicationDataInterface = {
   title: 'Solby',
-  shortName: 'EJK - NORTH RIFT',
+  shortName: 'EJKA - NORTH RIFT',
   fullName: 'ELDORET JUA KALI ASSOCIATION NORTH RIFT',
   version: '1.0.0',
 

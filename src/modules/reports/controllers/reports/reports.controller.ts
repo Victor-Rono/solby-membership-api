@@ -1,7 +1,7 @@
 /* eslint-disable prettier/prettier */
 import { Body, Controller, Post, Res, Headers } from '@nestjs/common';
 import { ReportsService } from '../../services/reports/reports.service';
-import { prepareRequest } from 'src/modules/base/base.controller';
+import { prepareRequest } from 'src/modules/base/controllers/base/base.controller';
 
 @Controller('reports')
 export class ReportsController {

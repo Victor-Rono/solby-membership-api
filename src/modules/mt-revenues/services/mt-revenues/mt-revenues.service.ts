@@ -4,7 +4,7 @@ import { CreateRequestInterface, DBRequestInterface, DatabaseCollectionEnums } f
 import { EmailInterface } from 'src/integrations/emails/emails.interface';
 import { EmailsService } from 'src/integrations/emails/services/emails/emails.service';
 import { PdfService } from 'src/integrations/file-manager/services/pdf/pdf.service';
-import { BaseService } from 'src/modules/base/base.service';
+import { BaseService } from 'src/modules/base/services/base/base.service';
 import { PieChartInterface } from 'src/shared/interfaces/apex.interface';
 import { LedgerTypeEnums, LedgerInterface } from 'src/shared/interfaces/ledger.interface';
 import { MT_RevenueInterface, MT_RevenuesDashboardInterface, RevenueCategoryInterface } from 'src/shared/interfaces/MT-revenues.interface';

@@ -1,7 +1,7 @@
 /* eslint-disable prettier/prettier */
 import { Injectable } from '@nestjs/common';
 import { DatabaseCollectionEnums, DBRequestInterface } from 'src/database/database.interface';
-import { BaseService } from 'src/modules/base/base.service';
+import { BaseService } from 'src/modules/base/services/base/base.service';
 import { DefaultSubscriptions, subscriptionConfigId } from '../../data/subscriptions.data';
 
 @Injectable()

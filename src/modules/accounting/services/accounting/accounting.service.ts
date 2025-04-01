@@ -6,7 +6,7 @@ import {
   DatabaseCollectionEnums,
   DBRequestInterface,
 } from 'src/database/database.interface';
-import { BaseService } from 'src/modules/base/base.service';
+import { BaseService } from 'src/modules/base/services/base/base.service';
 import { generateUniqueId } from 'src/database/database.functions';
 import {
   dayMonthYear,

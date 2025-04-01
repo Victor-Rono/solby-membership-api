@@ -5,9 +5,9 @@ import { createNotification } from 'src/shared/functions/notifications.functions
 import { CreditorInterface } from 'src/shared/interfaces/creditors.interface';
 import { UserInterface, UserRegistrationInterface } from 'src/shared/interfaces/user.interface';
 import { checkIfExistsInterface, CreateRequestInterface, DatabaseCollectionEnums, DBRequestInterface, FieldValueInterface, MultipleFieldQueryInterface, MultipleFieldRequestInterface, MultipleFieldValueInterface } from 'src/database/database.interface';
-import { BaseService } from 'src/modules/base/base.service';
+import { BaseService } from 'src/modules/base/services/base/base.service';
 import { generateUniqueId } from 'src/database/database.functions';
-import { prepareRequest } from 'src/modules/base/base.controller';
+import { prepareRequest } from 'src/modules/base/controllers/base/base.controller';
 import { filterByDateRange, getTotalForField, sortArrayByKey } from 'victor-dev-toolbox';
 import { resolveMultiplePromises } from 'src/shared/functions/promises.functions';
 import { InvoiceInterface } from 'src/modules/invoices/invoices.interface';

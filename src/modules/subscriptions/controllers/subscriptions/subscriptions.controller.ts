@@ -1,7 +1,7 @@
 /* eslint-disable prettier/prettier */
 
 import { Controller, Post, Body, Headers, Get } from '@nestjs/common';
-import { BaseController, prepareRequest } from 'src/modules/base/base.controller';
+import { BaseController, prepareRequest } from 'src/modules/base/controllers/base/base.controller';
 import { SubscriptionsService } from '../../services/subscriptions/subscriptions.service';
 
 @Controller('subscriptions')

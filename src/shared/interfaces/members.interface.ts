@@ -63,4 +63,5 @@ export interface MembershipDashboardInterface {
   invoiceTotals: InvoiceCalculationInterface,
   adminGroups: GroupInterface[],
   group: GroupInterface,
+  totalContributions: number,
 }

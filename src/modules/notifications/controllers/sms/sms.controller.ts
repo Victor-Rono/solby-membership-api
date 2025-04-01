@@ -1,7 +1,7 @@
 /* eslint-disable prettier/prettier */
 import { Body, Controller, Post, Headers } from '@nestjs/common';
 import { EventEmitter2 } from '@nestjs/event-emitter';
-import { prepareRequest } from 'src/modules/base/base.controller';
+import { prepareRequest } from 'src/modules/base/controllers/base/base.controller';
 import { SmsService } from 'src/modules/notifications/sms/services/sms/sms.service';
 import { SMSEventsEnum } from 'src/shared/interfaces/sms.interface';
 

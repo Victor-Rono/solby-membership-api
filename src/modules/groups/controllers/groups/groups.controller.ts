@@ -1,6 +1,6 @@
 /* eslint-disable prettier/prettier */
 import { Controller, Get, Headers, Param, Post, Body } from '@nestjs/common';
-import { BaseController, prepareRequest } from 'src/modules/base/base.controller';
+import { BaseController, prepareRequest } from 'src/modules/base/controllers/base/base.controller';
 import { GroupsService } from '../../services/groups/groups.service';
 
 @Controller('groups')

@@ -3,14 +3,14 @@ import { Injectable } from "@nestjs/common";
 import { log } from "console";
 import { cloneDeep } from "lodash";
 import { DatabaseCollectionEnums, DBRequestInterface } from "src/database/database.interface";
-import { BaseService } from "src/modules/base/base.service";
 import { CreatePermissionFromEnums } from "src/modules/permissions/permissions.functions";
 import { resolveMultiplePromises } from "src/shared/functions/promises.functions";
 import { PermissionEnums, PermissionInterface } from "src/shared/interfaces/permission.interface";
 import { UserInterface, UserRoleType } from "src/shared/interfaces/user.interface";
 import { generateUniqueId } from "victor-dev-toolbox";
 import { UserEventsEnum } from "../users-automation/user-events.enum";
-
+import { BaseService } from "src/modules/base/services/base/base.service";
+// 
 
 
 @Injectable()

@@ -2,7 +2,7 @@
 
 import { Injectable, NotFoundException } from "@nestjs/common";
 import { DatabaseCollectionEnums, DBRequestInterface } from "src/database/database.interface";
-import { BaseService } from "src/modules/base/base.service";
+import { BaseService } from "src/modules/base/services/base/base.service";
 import { SmsService } from "src/modules/notifications/sms/services/sms/sms.service";
 import { UserInterface, UserVerificationInterface, UserAuthenticationInterface, PasswordResetInterface } from "src/shared/interfaces/user.interface";
 import { generateUniqueId } from "victor-dev-toolbox";
@@ -137,7 +137,6 @@ export class AuthService extends BaseService<any, any, any, any> {
         const { email, password } = payload;
         const usersFromDb: UserInterface[] = await this.databaseService.getItemsByField({ field: 'email', value: email, collection: DatabaseCollectionEnums.USERS, organizationId });
         const user = usersFromDb[0] || null;
-        console.log({ user });
 
 
         if (!user) {
@@ -148,7 +147,6 @@ export class AuthService extends BaseService<any, any, any, any> {
 
         if (!user.verified) {
             const createCredentials = await this.createUserCredentials({ userId: user.id, password });
-            console.log({ createCredentials });
 
             return { token, user };
 
@@ -175,7 +173,6 @@ export class AuthService extends BaseService<any, any, any, any> {
         // }
         const usersFromDB: UserInterface[] = await this.databaseService.getItemsByField({ organizationId, field: 'email', value: email, collection: DatabaseCollectionEnums.USERS });
         const user = usersFromDB[0] || null;
-        console.log({ user });
         if (!user) {
             // throw new Error('User not found');
             return result;
@@ -245,7 +242,6 @@ export class AuthService extends BaseService<any, any, any, any> {
             return false;
         }
         const isPasswordValid = await compare(password, credential.password);
-        console.log(({ credential, isPasswordValid }));
 
         return isPasswordValid;
     }

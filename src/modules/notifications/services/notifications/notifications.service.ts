@@ -4,7 +4,7 @@ import { NotificationDataInterface, NotificationMessageInterface, UserNotificati
 import { UserInterface } from 'src/shared/interfaces/user.interface';
 import { sortArrayByKey } from 'victor-dev-toolbox';
 import { DatabaseCollectionEnums } from 'src/database/database.interface';
-import { BaseService } from 'src/modules/base/base.service';
+import { BaseService } from 'src/modules/base/services/base/base.service';
 import { generateUniqueId } from 'src/database/database.functions';
 
 const collection: DatabaseCollectionEnums = DatabaseCollectionEnums.NOTIFICATIONS;

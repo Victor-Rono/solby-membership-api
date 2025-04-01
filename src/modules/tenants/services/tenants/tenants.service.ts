@@ -1,7 +1,7 @@
 /* eslint-disable prettier/prettier */
 import { PermissionInterface } from 'src/shared/interfaces/permission.interface';
 import { Injectable } from '@nestjs/common';
-import { BaseService } from 'src/modules/base/base.service';
+import { BaseService } from 'src/modules/base/services/base/base.service';
 import { UsersService } from 'src/modules/users/services/users/users.service';
 import { UserInterface } from 'src/shared/interfaces/user.interface';
 import { getEnumValues, getFieldValuesFromArray, getXDaysFromTomorrow, uniqueArrayItems } from 'victor-dev-toolbox';

@@ -1,7 +1,7 @@
 /* eslint-disable prettier/prettier */
 import { Injectable } from '@nestjs/common';
 import { DatabaseCollectionEnums, DBRequestInterface } from 'src/database/database.interface';
-import { BaseService } from 'src/modules/base/base.service';
+import { BaseService } from 'src/modules/base/services/base/base.service';
 import { InvoiceInterface } from 'src/modules/invoices/invoices.interface';
 import { MembersService } from 'src/modules/members/services/members/members.service';
 import { totalForAllInvoices } from 'src/shared/functions/invoices.functions';

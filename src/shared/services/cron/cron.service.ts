@@ -3,7 +3,7 @@
 import { Injectable } from '@nestjs/common';
 import { Cron, CronExpression } from '@nestjs/schedule';
 import { take } from 'rxjs';
-import { BaseAutomationService } from 'src/modules/base/base-automation/base-automation.service';
+import { BaseAutomationService } from 'src/modules/base/services/base-automation/base-automation.service';
 import { MemberEventsEnum } from 'src/modules/members/services/members-automation/members-events.enum';
 @Injectable()
 export class CronService extends BaseAutomationService {

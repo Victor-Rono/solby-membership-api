@@ -1,7 +1,7 @@
 /* eslint-disable prettier/prettier */
 import { Get, UsePipes, ValidationPipe, Param, Post, Body, Put, Delete, Headers } from "@nestjs/common";
-import { BaseService } from "./base.service";
 import { CreateRequestInterface, DBRequestInterface, FieldValueInterface, FieldValueRequestInterface, MultipleFieldRequestInterface, MultipleFieldValueInterface } from "src/database/database.interface";
+import { BaseService } from "../../services/base/base.service";
 
 /**
  * The `BaseController` class is a generic controller that provides basic CRUD operations for a database entity.

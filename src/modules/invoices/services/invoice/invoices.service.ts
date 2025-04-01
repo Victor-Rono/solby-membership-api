@@ -7,7 +7,7 @@ import { combineArrays, getEnumValues, getFieldValuesFromArray, getTotalForField
 import { cloneDeep } from 'lodash';
 import { generateUniqueId } from 'src/database/database.functions';
 import { isToday, jumpToXNumberOfDays } from "victor-dev-toolbox"
-import { BaseService } from 'src/modules/base/base.service';
+import { BaseService } from 'src/modules/base/services/base/base.service';
 import { SmsService } from 'src/modules/notifications/sms/services/sms/sms.service';
 import { InvoiceInterface, PayForInvoicesInterface, InvoiceEnums, InvoiceRevenueInterface, InvoiceStatsInterface } from 'src/modules/invoices/invoices.interface';
 import { ProdFrontendURL } from 'src/shared/data/application.data';

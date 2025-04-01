@@ -5,7 +5,7 @@ import { EmailInterface } from 'src/integrations/emails/emails.interface';
 import { EmailsService } from 'src/integrations/emails/services/emails/emails.service';
 import { PdfService } from 'src/integrations/file-manager/services/pdf/pdf.service';
 import { creditorDocumentTemplate } from 'src/modules/accounting/templates/creditor-debtor/creditor.template';
-import { BaseService } from 'src/modules/base/base.service';
+import { BaseService } from 'src/modules/base/services/base/base.service';
 import { InvoiceInterface } from 'src/modules/invoices/invoices.interface';
 import { DebtorInterface } from 'src/shared/interfaces/debtors.interface';
 import { OrganizationInterface } from 'src/shared/interfaces/organization.interface';

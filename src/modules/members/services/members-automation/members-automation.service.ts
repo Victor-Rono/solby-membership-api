@@ -2,7 +2,7 @@
 
 import { Injectable } from '@nestjs/common';
 import { OnEvent } from '@nestjs/event-emitter';
-import { BaseAutomationService } from 'src/modules/base/base-automation/base-automation.service';
+import { BaseAutomationService } from 'src/modules/base/services/base-automation/base-automation.service';
 import { MemberEventsEnum } from './members-events.enum';
 import { MemberAccountInterface, MemberInterface } from 'src/shared/interfaces/members.interface';
 import { SubscriptionInterface, SubscriptionTypeEnum } from 'src/shared/interfaces/subscriptions.interface';

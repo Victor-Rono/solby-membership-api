@@ -1,6 +1,6 @@
 /* eslint-disable prettier/prettier */
 import { Controller, Post, Headers, Body, Param, Get, Res } from '@nestjs/common';
-import { BaseController, prepareRequest } from 'src/modules/base/base.controller';
+import { BaseController, prepareRequest } from 'src/modules/base/controllers/base/base.controller';
 import { CreditorsService } from '../../services/creditors/creditors.service';
 
 @Controller('creditors')

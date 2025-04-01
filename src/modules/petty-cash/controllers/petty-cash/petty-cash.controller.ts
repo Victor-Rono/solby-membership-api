@@ -1,7 +1,7 @@
 /* eslint-disable prettier/prettier */
 import { Body, Controller, Post, Headers, Get } from '@nestjs/common';
 import { PettyCashService } from '../../services/petty-cash/petty-cash.service';
-import { BaseController, prepareRequest } from 'src/modules/base/base.controller';
+import { BaseController, prepareRequest } from 'src/modules/base/controllers/base/base.controller';
 
 @Controller('petty-cash')
 export class PettyCashController extends BaseController<any, any, any, any> {

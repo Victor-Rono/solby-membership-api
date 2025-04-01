@@ -14,7 +14,7 @@ import { SubscriptionConfigInterface, SubscriptionInterface, SubscriptionTypeEnu
 import { generateUniqueId, getTotalForField, jumpToXNumberOfDays, resolveMultiplePromises } from "victor-dev-toolbox";
 import { MembersService } from "../members/members.service";
 import { totalForAllInvoices } from "src/shared/functions/invoices.functions";
-import { BaseAutomationService } from "src/modules/base/base-automation/base-automation.service";
+import { BaseAutomationService } from "src/modules/base/services/base-automation/base-automation.service";
 import { SMSEventsEnum } from '../../../../shared/interfaces/sms.interface';
 
 @Injectable()

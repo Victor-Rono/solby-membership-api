@@ -1,7 +1,7 @@
 /* eslint-disable prettier/prettier */
 import { Body, Controller, Post, Headers, Param, Res } from '@nestjs/common';
 import { InvoiceManagerService } from '../../services/invoice-manager/invoice-manager.service';
-import { prepareRequest } from 'src/modules/base/base.controller';
+import { prepareRequest } from 'src/modules/base/controllers/base/base.controller';
 
 @Controller('invoice-manager')
 export class InvoiceManagerController {

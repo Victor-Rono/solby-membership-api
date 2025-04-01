@@ -1,7 +1,7 @@
 /* eslint-disable prettier/prettier */
 import { Injectable } from '@nestjs/common';
 import { DatabaseCollectionEnums, DBRequestInterface } from 'src/database/database.interface';
-import { BaseService } from 'src/modules/base/base.service';
+import { BaseService } from 'src/modules/base/services/base/base.service';
 import { DebtorInterface } from 'src/shared/interfaces/debtors.interface';
 import { MT_SaleInterface } from 'src/shared/interfaces/MT-sales.interface';
 import { PaymentIntervalEnum } from 'src/shared/interfaces/payment.interface';

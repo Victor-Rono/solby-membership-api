@@ -3,7 +3,7 @@ import { Injectable } from '@nestjs/common';
 import * as nodemailer from 'nodemailer';
 import { DefaultEmailConfig } from '../../config/email.config';
 import { EmailInterface } from '../../emails.interface';
-import { BaseAutomationService } from 'src/modules/base/base-automation/base-automation.service';
+import { BaseAutomationService } from 'src/modules/base/services/base-automation/base-automation.service';
 import { DatabaseCollectionEnums } from 'src/database/database.interface';
 import { generateUniqueId } from 'src/database/database.functions';
 

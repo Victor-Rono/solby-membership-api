@@ -1,7 +1,7 @@
 /* eslint-disable prettier/prettier */
 import { Injectable } from '@nestjs/common';
 import { DatabaseCollectionEnums, DBRequestInterface } from 'src/database/database.interface';
-import { BaseService } from 'src/modules/base/base.service';
+import { BaseService } from 'src/modules/base/services/base/base.service';
 import { getFieldValuesFromArray } from 'victor-dev-toolbox';
 import { PermissionInterface } from 'src/shared/interfaces/permission.interface';
 

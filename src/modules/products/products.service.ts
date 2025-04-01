@@ -3,7 +3,7 @@ import { Injectable } from '@nestjs/common';
 import { ProductInterface, StockRemovalInterface, UnsoldProductInterface } from 'src/shared/interfaces/product.interface';
 import { createNotification } from 'src/shared/functions/notifications.functions';
 import { CreateRequestInterface, DatabaseCollectionEnums, DBRequestInterface } from 'src/database/database.interface';
-import { BaseService } from 'src/modules/base/base.service';
+import { BaseService } from 'src/modules/base/services/base/base.service';
 import { generateUniqueId } from 'src/database/database.functions';
 import { resolveMultiplePromises } from 'victor-dev-toolbox';
 import { OrganizationInterface } from 'src/shared/interfaces/organization.interface';

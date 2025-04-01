@@ -3,7 +3,7 @@
 import { Injectable } from '@nestjs/common';
 import { CreateRequestInterface, DatabaseCollectionEnums, DBRequestInterface } from 'src/database/database.interface';
 import { PdfService } from 'src/integrations/file-manager/services/pdf/pdf.service';
-import { BaseService } from 'src/modules/base/base.service';
+import { BaseService } from 'src/modules/base/services/base/base.service';
 import { PieChartInterface } from 'src/shared/interfaces/apex.interface';
 import { ExpenseCategoryInterface, GroupedExpensesInterface, MT_ExpenseInterface, MT_ExpensesDashboardInterface } from 'src/shared/interfaces/MT-expenses.interface';
 import { OrganizationInterface } from 'src/shared/interfaces/organization.interface';

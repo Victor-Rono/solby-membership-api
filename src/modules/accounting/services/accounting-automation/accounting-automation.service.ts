@@ -1,7 +1,7 @@
 /* eslint-disable prettier/prettier */
 import { Injectable } from '@nestjs/common';
 import { OnEvent } from '@nestjs/event-emitter';
-import { BaseService } from 'src/modules/base/base.service';
+import { BaseService } from 'src/modules/base/services/base/base.service';
 import { AccountEventsEnum } from './accounting-events.enums';
 import { LedgerInterface, LedgerTypeEnums } from 'src/shared/interfaces/ledger.interface';
 import { DatabaseCollectionEnums } from 'src/database/database.interface';

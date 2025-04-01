@@ -1,7 +1,7 @@
 /* eslint-disable prettier/prettier */
 import { Body, Controller, Get, Param, Post, Res, Headers } from '@nestjs/common';
 import { FarmersService } from '../../services/farmers/farmers.service';
-import { BaseController, prepareRequest } from 'src/modules/base/base.controller';
+import { BaseController, prepareRequest } from 'src/modules/base/controllers/base/base.controller';
 
 @Controller('farmers')
 export class FarmersController extends BaseController<any, any, any, any> {

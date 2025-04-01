@@ -5,7 +5,7 @@ import { DatabaseCollectionEnums, DBRequestInterface } from 'src/database/databa
 import { PdfService } from 'src/integrations/file-manager/services/pdf/pdf.service';
 import { AccountingEnum, AccountInterface, AccountSummaryInterface, DefaultAccountEnums } from 'src/modules/accounting/accounting.interface';
 import { VirtualAccounts } from 'src/modules/accounting/services/accounting/virtual-accounts.data';
-import { BaseService } from 'src/modules/base/base.service';
+import { BaseService } from 'src/modules/base/services/base/base.service';
 import { InvoiceCategoryEnum, InvoiceEnums, InvoiceInterface, InvoiceUserTypeEnum } from 'src/modules/invoices/invoices.interface';
 import { getFullDateRange } from 'src/shared/functions/date-time.functions';
 import { resolveMultiplePromises } from 'src/shared/functions/promises.functions';

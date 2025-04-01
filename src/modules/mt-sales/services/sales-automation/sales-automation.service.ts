@@ -2,7 +2,7 @@
 import { Injectable } from '@nestjs/common';
 import { OnEvent } from '@nestjs/event-emitter';
 import { SalesEventsEnum } from './sales-events.enums';
-import { BaseAutomationService } from 'src/modules/base/base-automation/base-automation.service';
+import { BaseAutomationService } from 'src/modules/base/services/base-automation/base-automation.service';
 import { Mt_ItemsInterface, MT_SaleInterface, MT_SaleRecordInterface } from 'src/shared/interfaces/MT-sales.interface';
 import { DatabaseCollectionEnums } from 'src/database/database.interface';
 import { ProductInterface } from 'src/shared/interfaces/product.interface';

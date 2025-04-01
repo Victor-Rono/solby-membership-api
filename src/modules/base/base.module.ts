@@ -4,7 +4,7 @@ import { HttpModule } from '@nestjs/axios';
 import { DatabaseModule } from 'src/database/database.module';
 import { SmsModule } from '../notifications/sms/sms.module';
 import { NotificationsModule } from '../notifications/notifications.module';
-import { BaseAutomationService } from './base-automation/base-automation.service';
+import { BaseAutomationService } from './services/base-automation/base-automation.service';
 
 
 const imports: any[] = [
