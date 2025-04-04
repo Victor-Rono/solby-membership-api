@@ -7,6 +7,7 @@ import { PdfService } from 'src/integrations/file-manager/services/pdf/pdf.servi
 import { creditorDocumentTemplate } from 'src/modules/accounting/templates/creditor-debtor/creditor.template';
 import { BaseService } from 'src/modules/base/services/base/base.service';
 import { InvoiceInterface } from 'src/modules/invoices/invoices.interface';
+import { MembersService } from 'src/modules/members/services/members/members.service';
 import { DebtorInterface } from 'src/shared/interfaces/debtors.interface';
 import { OrganizationInterface } from 'src/shared/interfaces/organization.interface';
 import { resolveMultiplePromises, getTotalForField, sortArrayByKey } from 'victor-dev-toolbox';
@@ -17,13 +18,14 @@ export class DebtorsService extends BaseService<any, any, any, any> {
     constructor(
         private emailService: EmailsService,
         private pdfService: PdfService,
+        private membersService: MembersService,
     ) {
         super();
     }
 
 
     override async getAll(organizationId: string) {
-        return this.getdebtorsAndInvoices(organizationId);
+        return this.membersService.getAll(organizationId);
     }
 
     override async getById(request: DBRequestInterface): Promise<any> {
@@ -33,7 +35,7 @@ export class DebtorsService extends BaseService<any, any, any, any> {
         const totalAmount = getTotalForField(invoices, 'totalAmount');
         const amountPaid = getTotalForField(invoices, 'amountPaid');
         const balance = totalAmount - amountPaid;
-        debtor.balance = balance;
+        debtor.outstandingBalance = balance;
         return debtor;
     }
 
@@ -46,7 +48,7 @@ export class DebtorsService extends BaseService<any, any, any, any> {
             $expr: {
                 $and: [
                     { $gt: ["$totalAmount", "$amountPaid"] },
-                    { $eq: ["$sellerId", organizationId] },
+                    // { $eq: ["$sellerId", organizationId] },
                     { $eq: ["$buyerId", id] }
                 ]
             }
@@ -68,7 +70,7 @@ export class DebtorsService extends BaseService<any, any, any, any> {
             }
         };
         const promises: any[] = [
-            super.getAll(organizationId),
+            this.getAll(organizationId),
             this.databaseService.getAllItems({ collection: DatabaseCollectionEnums.INVOICES, query, organizationId })
         ];
         const resolved = await resolveMultiplePromises(promises);
@@ -87,7 +89,7 @@ export class DebtorsService extends BaseService<any, any, any, any> {
     }
 
     private async getDebtorsReportHtml(organizationId: string) {
-        const title = 'Debtors Report';
+        const title = 'Members Report';
         const items: DebtorInterface[] = await this.getAll(organizationId);
         const organization: OrganizationInterface = await this.databaseService.getItem({ id: organizationId, organizationId, collection: DatabaseCollectionEnums.ORGANIZATIONS });
         const html = creditorDocumentTemplate({ title, items, organization });
@@ -97,7 +99,7 @@ export class DebtorsService extends BaseService<any, any, any, any> {
 
     async downloadAsPDF(request: DBRequestInterface) {
         const { organizationId } = request;
-        const fileName = `Debtors Report`;
+        const fileName = `Members Report`;
         const htmlTemplate = await this.getDebtorsReportHtml(organizationId);
         const response = await this.pdfService.generatePDFFromHTML({ fileName, html: htmlTemplate });
         return response;
@@ -111,7 +113,7 @@ export class DebtorsService extends BaseService<any, any, any, any> {
             throw new Error("Organization not found");
         }
         // const htmlTemplate = DocumentTemplate(Data);
-        const fileName = `Debtors Report`;
+        const fileName = `Members Report`;
         const pdf = await this.downloadAsPDF(request);
         const email: EmailInterface = {
             subject: fileName,

@@ -47,9 +47,9 @@ export class MembersService extends BaseService<any, any, any, any> {
         return this.getMemberPayments({ organizationId, members });
     }
 
-    async getOrgMembers(payload: { organizationId: string }) {
-        const { organizationId } = payload;
-        const users = await super.getAll(organizationId);
+    async getOrgMembers(payload: { organizationId: string, members?: MemberInterface[] }) {
+        const { organizationId, members } = payload;
+        const users = members || await super.getAll(organizationId);
 
         const orgUsers: MemberInterface[] = [];
 
@@ -77,7 +77,8 @@ export class MembersService extends BaseService<any, any, any, any> {
 
     override async getByField(request: FieldValueRequestInterface): Promise<any[]> {
 
-        const members: MemberInterface[] = await super.getByField(request);
+        const allMembers: MemberInterface[] = await super.getByField(request);
+        const members = await this.getOrgMembers({ organizationId: request.organizationId, members: allMembers });
 
         const query = {
             $expr: {
@@ -118,7 +119,7 @@ export class MembersService extends BaseService<any, any, any, any> {
             }
         };
         const promises: any[] = [
-            super.getAll(organizationId),
+            this.getAll(organizationId),
             this.databaseService.getAllItems({ collection: DatabaseCollectionEnums.INVOICES, query, organizationId }),
             this.databaseService.getAllItems({ collection: DatabaseCollectionEnums.MEMBER_ACCOUNTS, organizationId }),
         ];
