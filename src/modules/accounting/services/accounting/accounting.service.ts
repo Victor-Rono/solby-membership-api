@@ -9,6 +9,7 @@ import {
 import { BaseService } from 'src/modules/base/services/base/base.service';
 import { generateUniqueId } from 'src/database/database.functions';
 import {
+  DateRangeInterface,
   dayMonthYear,
   getEnumValues,
   getTotalForField,
@@ -229,6 +230,8 @@ export class AccountingService extends BaseService<any, any, any, any> {
       (account) => account.accountType === AccountingEnum.EXPENDITURE,
     );
 
+
+
     // Build the income statement
     return {
       startDate,
@@ -261,6 +264,8 @@ export class AccountingService extends BaseService<any, any, any, any> {
       this.databaseService.getAllItems({ organizationId, collection: DatabaseCollectionEnums.MT_REVENUE_CATEGORIES })
     ]);
 
+    // const memberContributions = await ;
+
     const expenseCategories: ExpenseCategoryInterface[] = categories[0];
     const revenueCategories: RevenueCategoryInterface[] = categories[1];
 
@@ -268,12 +273,29 @@ export class AccountingService extends BaseService<any, any, any, any> {
 
     const allSummaries = await resolveMultiplePromises([
       this.getAccountSummariesForExpenses(request, expenseCategories),
-      this.getAccountSummariesForRevenues(request, revenueCategories)
+      this.getAccountSummariesForRevenues(request, revenueCategories),
+      this.getAccountSummariesForInvoices(request, { startDate, stopDate })
     ]);
 
     const expenseSummaries: AccountSummaryInterface[] = allSummaries[0];
     const revenueSummaries = allSummaries[1];
+    const memberContributions: AccountSummaryInterface = allSummaries[2];
     return expenseSummaries.concat(summaries).concat(revenueSummaries);
+  }
+  private async getAccountSummariesForInvoices(request: DBRequestInterface, range: DateRangeInterface): Promise<AccountSummaryInterface> {
+    const { organizationId, payload } = request;
+    const invoices = await this.databaseService.getItemsByDateRange({ organizationId, collection: DatabaseCollectionEnums.INVOICES, startDate: range.startDate, stopDate: range.stopDate });
+    const memberInvoices = invoices.filter(i => i.sellerId === organizationId);
+    const organizationInvoices = invoices.filter(i => i.sellerId !== organizationId);
+    const memberSummary: AccountSummaryInterface = {
+      accountId: 'member',
+      accountType: AccountingEnum.REVENUE,
+      name: "Member Contributions",
+      amount: getTotalForField(memberInvoices, 'amountPaid'),
+    }
+    console.log({ memberSummary, memberInvoices });
+
+    return memberSummary;
   }
 
   async getAccountSummariesForExpenses(
@@ -329,6 +351,9 @@ export class AccountingService extends BaseService<any, any, any, any> {
     });
     return summaries;
   }
+
+
+
 
   async getIncomeStatementHTML(request: DBRequestInterface): Promise<string> {
     const { organizationId } = request;
