@@ -49,7 +49,7 @@ export class MembersService extends BaseService<any, any, any, any> {
 
     async getOrgMembers(payload: { organizationId: string }) {
         const { organizationId } = payload;
-        const users = await this.getAll(organizationId);
+        const users = await super.getAll(organizationId);
 
         const orgUsers: MemberInterface[] = [];
 
