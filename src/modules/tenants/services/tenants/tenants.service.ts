@@ -88,7 +88,7 @@ export class TenantsService extends BaseService<any, any, any, any> {
     }
 
     private addResources(organizationId: string) {
-        this.addProducts(organizationId);
+        // this.addProducts(organizationId);
         this.AddAccounts(organizationId);
         this.addSubscriptions(organizationId);
     }

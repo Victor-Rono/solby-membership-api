@@ -43,8 +43,24 @@ export class MembersService extends BaseService<any, any, any, any> {
     override async getAll(organizationId:
         string): Promise<any[]> {
         // return this.getCreditorsAndInvoices(organizationId);
-        const members = await super.getAll(organizationId);
+        const members = await this.getOrgMembers({ organizationId });
         return this.getMemberPayments({ organizationId, members });
+    }
+
+    async getOrgMembers(payload: { organizationId: string }) {
+        const { organizationId } = payload;
+        const users = await this.getAll(organizationId);
+
+        const orgUsers: MemberInterface[] = [];
+
+        users.forEach((user: MemberInterface) => {
+            const organizations = user.organizations || [];
+            if (organizations.includes(organizationId) && !user.admin) {
+                orgUsers.push(user);
+            }
+        });
+        return orgUsers;
+        // return this.databaseService.getItemsByField({ organizationId, field: { field: 'organizations', value: organizationId } });
     }
 
     override async getById(request: DBRequestInterface): Promise<any> {
