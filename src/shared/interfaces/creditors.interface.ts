@@ -22,4 +22,5 @@ export interface CreditorInterface extends RecordInterface {
     bankName?: string,
     bankBranch?: string,
     accountNumber: number,
+    outstandingBalance?: number,
 }

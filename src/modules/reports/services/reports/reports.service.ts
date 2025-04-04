@@ -37,18 +37,19 @@ export class ReportsService {
         const promises: any[] = [
             // income statement
             this.accountingService.printIncomeStatement(request),
+            // Members
+            this.debtorsService.print(request),
             // Ledger
             this.ledgerService.printLedger(request),
             // revenues
-            this.revenuesService.printRevenues(request),
+            // this.revenuesService.printRevenues(request),
 
             // Expenses
-            this.expensesService.printExpenses(request),
+            // this.expensesService.printExpenses(request),
 
             // Creditors
-            this.creditorsService.print(request),
-            // Debtors
-            this.debtorsService.print(request),
+            // this.creditorsService.print(request),
+
             // Milking
             // this.getMilkingRecordsTemplate(request),
         ];
